@@ -3,18 +3,22 @@ package com.example.googlemapstrial;
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.FragmentActivity;
 
 import android.Manifest;
+import android.app.AlertDialog;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
 import android.text.Layout;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.Toast;
@@ -55,7 +59,7 @@ public class MapsActivity extends FragmentActivity
         static  final int LOCATE_ME = 0;
         static  final int LOCATE_DRONE = 1;
         static  final int SET_DEST = 2;
-        static  final int SET_MULTIPLE_DEST = 3;
+        static  final int SET_MANUAL_DEST = 3;
 
         private LinearLayout lyt_dest;
         private Button btn_start, btn_stop, btn_clear, btn_add;
@@ -66,6 +70,8 @@ public class MapsActivity extends FragmentActivity
         private Marker droneMarker;
 
         private List<Marker> markers = new ArrayList<Marker>();
+
+        private Boolean isAddManually = false;
 
     /**
      * Request code for location permission request.
@@ -212,7 +218,11 @@ public class MapsActivity extends FragmentActivity
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.add: {
-                addMarker();
+                if (isAddManually) {
+                    openDialog();
+                } else {
+                    addMarker(MyLatLng);
+                }
                 break;
             }
             case R.id.clear: {
@@ -238,10 +248,12 @@ public class MapsActivity extends FragmentActivity
             }
             case SET_DEST: {
                 lyt_dest.setVisibility(View.VISIBLE);
+                isAddManually = false;
                 break;
             }
-            case SET_MULTIPLE_DEST: {
+            case SET_MANUAL_DEST: {
                 lyt_dest.setVisibility(View.VISIBLE);
+                isAddManually = true;
                 break;
             }
             default:
@@ -258,17 +270,19 @@ public class MapsActivity extends FragmentActivity
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(loc,17));
     }
 
-    public void addMarker() {
+    public void addMarker(LatLng latlng) {
         int number = markers.size() + 1;
         MarkerOptions a = new MarkerOptions()
-                .position(MyLatLng)
+                .position(latlng)
                 .draggable(true)
                 .title("Stage " + number);
 
         Marker m = mMap.addMarker(a);
-        m.setPosition(MyLatLng);
+        m.setPosition(latlng);
 
         markers.add(m);
+
+        moveToLocation(latlng);
     }
 
     public void clearMarkers() {
@@ -278,5 +292,37 @@ public class MapsActivity extends FragmentActivity
         }
 
         markers.clear();
+    }
+
+    public void openDialog() {
+        final AlertDialog.Builder mBuilder = new AlertDialog.Builder(MapsActivity.this);
+        final View dialogView = getLayoutInflater().inflate(R.layout.dialog_destination, null);
+
+        final EditText latText = (EditText) dialogView.findViewById(R.id.latitude);
+        final EditText lngText = (EditText) dialogView.findViewById(R.id.longitude);
+        Button btnAdd = (Button) dialogView.findViewById(R.id.add);
+
+        mBuilder.setView(dialogView);
+        final AlertDialog dialog = mBuilder.create();
+
+        btnAdd.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(!latText.getText().toString().isEmpty() && !lngText.getText().toString().isEmpty()) {
+                    final Double lat = Double.parseDouble(latText.getText().toString());
+                    final Double lng = Double.parseDouble(lngText.getText().toString());
+
+                    addMarker(new LatLng(lat, lng));
+                    dialog.cancel();
+                } else {
+                    Toast toast = Toast.makeText(getApplicationContext(),
+                            "Set a lat & lng to continue",
+                            Toast.LENGTH_SHORT);
+                    toast.show();
+                }
+            }
+        });
+
+        dialog.show();
     }
 }
