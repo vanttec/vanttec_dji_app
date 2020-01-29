@@ -1,0 +1,21 @@
+<resources>
+    <string name="app_name">GoogleMapsTrial</string>
+    <string name="title_activity_maps">Map</string>
+    <string name="permission_required_toast">Permission Required</string>
+    <string name="location_permission_denied">Ubicación denegada</string>
+    <string name="permission_rationale_location">permission_rationale_location</string>
+
+    <string name="btn_start">Start</string>
+    <string name="btn_stop">Stop</string>
+    <string name="btn_clear">Clear</string>
+    <string name="btn_add">Add</string>
+
+    <string-array name="map_settings">
+        <item>Locate Me</item>
+        <item>Locate Drone</item>
+        <item>Set Destinations</item>
+        <item>Set Manually Destinations</item>
+        <item>Return Home</item>
+        <item>Add GeoFence</item>
+    </string-array>
+</resources>
