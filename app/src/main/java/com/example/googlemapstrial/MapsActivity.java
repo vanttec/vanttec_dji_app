@@ -3,17 +3,15 @@ package com.example.googlemapstrial;
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
-import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.FragmentActivity;
 
 import android.Manifest;
 import android.app.AlertDialog;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.location.Location;
 import android.os.Bundle;
-import android.text.Layout;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -24,19 +22,23 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.Geofence;
+import com.google.android.gms.location.GeofencingClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMap.OnMyLocationButtonClickListener;
 import com.google.android.gms.maps.GoogleMap.OnMyLocationClickListener;
+import com.google.android.gms.maps.GoogleMap.OnMarkerClickListener;
+import com.google.android.gms.maps.GoogleMap.OnMarkerDragListener;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.Circle;
+import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.maps.model.Polygon;
-import com.google.android.gms.maps.model.PolygonOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
 
 import java.util.ArrayList;
@@ -50,6 +52,8 @@ public class MapsActivity extends FragmentActivity
         OnMapReadyCallback,
         OnMyLocationButtonClickListener,
         OnMyLocationClickListener,
+        OnMarkerClickListener,
+        OnMarkerDragListener,
         ActivityCompat.OnRequestPermissionsResultCallback {
 
         private GoogleMap mMap;
@@ -59,7 +63,11 @@ public class MapsActivity extends FragmentActivity
         static  final int LOCATE_ME = 0;
         static  final int LOCATE_DRONE = 1;
         static  final int SET_DEST = 2;
-        static  final int SET_MANUAL_DEST = 3;
+        static  final int SET_DEST_MANUALLY = 3;
+        static  final int RETURN_HOME = 4;
+        static  final int ADD_GEOFENCE = 5;
+        static  final int ADD_GEOFENCE_MANUALLY = 6;
+
 
         private LinearLayout lyt_dest;
         private Button btn_start, btn_stop, btn_clear, btn_add;
@@ -87,6 +95,13 @@ public class MapsActivity extends FragmentActivity
     private boolean mPermissionDenied = false;
     private FusedLocationProviderClient fusedLocationClient;
 
+    //Geofence variables
+    private GeofencingClient geofencingClient;
+    private List<Geofence> geoList = new ArrayList<Geofence>();
+    private int GEOFENCE_RADIUS = 100;
+    private Marker geofenceMarker;
+    private Circle geoFenceLimits;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -99,17 +114,20 @@ public class MapsActivity extends FragmentActivity
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
 
         fusedLocationClient.getLastLocation()
-        .addOnSuccessListener(this, new OnSuccessListener<Location>() {
-            @Override
-            public void onSuccess(Location location) {
-                // Got last known location. In some rare situations this can be null.
-                if (location != null) {
-                    MyLatLng = new LatLng(location.getLatitude(),location.getLongitude());
-                }
-            }
-        });
+                .addOnSuccessListener(this, new OnSuccessListener<Location>() {
+                    @Override
+                    public void onSuccess(Location location) {
+                        // Got last known location. In some rare situations this can be null.
+                        if (location != null) {
+                            MyLatLng = new LatLng(location.getLatitude(),location.getLongitude());
+                        }
+                    }
+                });
 
         initUI();
+
+
+        //geofencingClient = LocationServices.getGeofencingClient(this);
     }
 
     private void initUI() {
@@ -151,28 +169,18 @@ public class MapsActivity extends FragmentActivity
         mMap = googleMap;
         //mMap.setOnMyLocationButtonClickListener(this);
         mMap.setOnMyLocationClickListener(this);
+        mMap.setOnMarkerDragListener(this);
+
+
         enableMyLocation();
 
         //init Marker
-        MarkerOptions a = new MarkerOptions().position(cetec).title("Drone");
+        MarkerOptions a = new MarkerOptions().position(cetec).title("Drone").icon(BitmapDescriptorFactory.fromResource(R.drawable.drone_pin));
+        //Icons made by <a href="https://www.flaticon.com/authors/smashicons" title="Smashicons">Smashicons</a> from <a href="https://www.flaticon.com/" title="Flaticon"> www.flaticon.com</a>
         droneMarker = mMap.addMarker(a);
 
-        /*
-
-        // Move the camera instantly to Sydney with a zoom of 15.
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(sydney,15));
-
-        // Instantiates a new Polygon object and adds points to define a rectangle
-        PolygonOptions rectOptions = new PolygonOptions()
-                .add(new LatLng(37.35, -122.0),
-                        new LatLng(37.45, -122.0),
-                        new LatLng(37.45, -122.2),
-                        new LatLng(37.35, -122.2),
-                        new LatLng(37.35, -122.0));
-
-        // Get back the mutable Polygon
-        Polygon polygon = mMap.addPolygon(rectOptions);
-        */
+        // Set a listener for marker click.
+        mMap.setOnMarkerClickListener(this);
     }
 
     /**
@@ -219,7 +227,7 @@ public class MapsActivity extends FragmentActivity
         switch (v.getId()) {
             case R.id.add: {
                 if (isAddManually) {
-                    openDialog();
+                    openDialog(SET_DEST_MANUALLY);
                 } else {
                     addMarker(MyLatLng);
                 }
@@ -251,9 +259,17 @@ public class MapsActivity extends FragmentActivity
                 isAddManually = false;
                 break;
             }
-            case SET_MANUAL_DEST: {
+            case SET_DEST_MANUALLY: {
                 lyt_dest.setVisibility(View.VISIBLE);
                 isAddManually = true;
+                break;
+            }
+            case ADD_GEOFENCE:{
+                addGeoMarker(MyLatLng);
+                break;
+            }
+            case ADD_GEOFENCE_MANUALLY:{
+                openDialog(ADD_GEOFENCE_MANUALLY);
                 break;
             }
             default:
@@ -271,16 +287,27 @@ public class MapsActivity extends FragmentActivity
     }
 
     public void addMarker(LatLng latlng) {
-        int number = markers.size() + 1;
+        int stageNumber = markers.size() + 1;
         MarkerOptions a = new MarkerOptions()
                 .position(latlng)
                 .draggable(true)
-                .title("Stage " + number);
+                .title("Stage " + stageNumber);
 
         Marker m = mMap.addMarker(a);
         m.setPosition(latlng);
 
         markers.add(m);
+        moveToLocation(latlng);
+    }
+
+    public void addGeoMarker(LatLng latlng) {
+        MarkerOptions a = new MarkerOptions()
+                .position(latlng)
+                .draggable(true)
+                .title("GEOFENCE");
+
+        geofenceMarker = mMap.addMarker(a);
+        geofenceMarker.setPosition(latlng);
 
         moveToLocation(latlng);
     }
@@ -294,7 +321,7 @@ public class MapsActivity extends FragmentActivity
         markers.clear();
     }
 
-    public void openDialog() {
+    public void openDialog(final int option) {
         final AlertDialog.Builder mBuilder = new AlertDialog.Builder(MapsActivity.this);
         final View dialogView = getLayoutInflater().inflate(R.layout.dialog_destination, null);
 
@@ -312,6 +339,16 @@ public class MapsActivity extends FragmentActivity
                     final Double lat = Double.parseDouble(latText.getText().toString());
                     final Double lng = Double.parseDouble(lngText.getText().toString());
 
+                    switch (option) {
+                        case SET_DEST_MANUALLY: {
+                            addMarker(new LatLng(lat, lng));
+                            break;
+                        }
+                        case ADD_GEOFENCE_MANUALLY: {
+                            addGeofence(new LatLng(lat, lng));
+                            break;
+                        }
+                    }
                     addMarker(new LatLng(lat, lng));
                     dialog.cancel();
                 } else {
@@ -324,5 +361,59 @@ public class MapsActivity extends FragmentActivity
         });
 
         dialog.show();
+    }
+
+    /** Called when the user clicks a marker. */
+    @Override
+    public boolean onMarkerClick(final Marker marker) {
+        Toast.makeText(this, "pos: " + marker.getPosition(), Toast.LENGTH_SHORT).show();
+        if(marker.equals(geofenceMarker)) {
+            Toast.makeText(this, "Geo Marker", Toast.LENGTH_SHORT).show();
+            addGeofenceCircle();
+        }
+
+        return false;
+    }
+
+
+    //Draw the circle for now
+    public void addGeofence(LatLng latLng) {
+        Log.d("call", "drawGeofence()");
+
+        if(geofenceMarker == null) {
+            addGeoMarker(latLng);
+        }
+
+        addGeofenceCircle();
+    }
+
+    private void addGeofenceCircle() {
+        if ( geoFenceLimits != null ) {
+            Log.d("call", "fence limits not null");
+            geoFenceLimits.remove();
+        }
+
+        Toast.makeText(this, "pos: " + geofenceMarker.getPosition(), Toast.LENGTH_SHORT).show();
+        CircleOptions circleOptions = new CircleOptions()
+                .center( geofenceMarker.getPosition() )
+                .strokeColor(Color.argb(50, 70,70,70))
+                .fillColor( Color.argb(100, 150,150,150) )
+                .radius( GEOFENCE_RADIUS );
+        geoFenceLimits = mMap.addCircle( circleOptions );
+    }
+
+    @Override
+    public void onMarkerDragStart(Marker marker) {
+
+    }
+
+    @Override
+    public void onMarkerDrag(Marker marker) {
+
+    }
+
+    @Override
+    public void onMarkerDragEnd(Marker marker) {
+
     }
 }

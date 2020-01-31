@@ -17,5 +17,6 @@
         <item>Set Manually Destinations</item>
         <item>Return Home</item>
         <item>Add GeoFence</item>
+        <item>Add GeoFence Manually</item>
     </string-array>
 </resources>
