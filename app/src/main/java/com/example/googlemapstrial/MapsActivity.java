@@ -327,6 +327,7 @@ public class MapsActivity extends FragmentActivity
 
         final EditText latText = (EditText) dialogView.findViewById(R.id.latitude);
         final EditText lngText = (EditText) dialogView.findViewById(R.id.longitude);
+        final EditText altText = (EditText) dialogView.findViewById(R.id.altitude);
         Button btnAdd = (Button) dialogView.findViewById(R.id.add);
 
         mBuilder.setView(dialogView);
@@ -338,6 +339,7 @@ public class MapsActivity extends FragmentActivity
                 if(!latText.getText().toString().isEmpty() && !lngText.getText().toString().isEmpty()) {
                     final Double lat = Double.parseDouble(latText.getText().toString());
                     final Double lng = Double.parseDouble(lngText.getText().toString());
+                    final Double alt = Double.parseDouble(altText.getText().toString());
 
                     switch (option) {
                         case SET_DEST_MANUALLY: {
