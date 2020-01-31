@@ -28,6 +28,7 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMap.OnMyLocationButtonClickListener;
+import com.google.android.gms.maps.GoogleMap.OnCircleClickListener;
 import com.google.android.gms.maps.GoogleMap.OnMyLocationClickListener;
 import com.google.android.gms.maps.GoogleMap.OnMarkerClickListener;
 import com.google.android.gms.maps.GoogleMap.OnMarkerDragListener;
@@ -54,6 +55,7 @@ public class MapsActivity extends FragmentActivity
         OnMyLocationClickListener,
         OnMarkerClickListener,
         OnMarkerDragListener,
+        OnCircleClickListener,
         ActivityCompat.OnRequestPermissionsResultCallback {
 
     //constants
@@ -180,6 +182,7 @@ public class MapsActivity extends FragmentActivity
 
         // Set a listener for marker click.
         mMap.setOnMarkerClickListener(this);
+        mMap.setOnCircleClickListener(this);
     }
 
     /**
@@ -395,6 +398,47 @@ public class MapsActivity extends FragmentActivity
         dialog.show();
     }
 
+    public void openDialogRadioGeofence() {
+        final AlertDialog.Builder mBuilder = new AlertDialog.Builder(MapsActivity.this);
+        final View dialogView = getLayoutInflater().inflate(R.layout.dialog_radio_geofence, null);
+
+        final EditText radioText = (EditText) dialogView.findViewById(R.id.radio);
+        Button btnAdd = (Button) dialogView.findViewById(R.id.add);
+        Button btnRemove = (Button) dialogView.findViewById(R.id.remove);
+
+        mBuilder.setView(dialogView);
+        final AlertDialog dialog = mBuilder.create();
+
+        btnAdd.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(!radioText.getText().toString().isEmpty()) {
+                    final Double radio = Double.parseDouble(radioText.getText().toString());
+                    GEOFENCE_RADIUS = radio;
+                    addGeofence();
+                    dialog.cancel();
+                } else {
+                    Toast toast = Toast.makeText(getApplicationContext(),
+                            "Set a valid Radio",
+                            Toast.LENGTH_SHORT);
+                    toast.show();
+                }
+            }
+        });
+
+        btnRemove.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.cancel();
+                removeGeofence();
+                geofenceMarker.remove();
+                geofenceMarker = null;
+            }
+        });
+
+        dialog.show();
+    }
+
     //Draw the circle for now
     public void addGeofence() {
         Log.d("call", "drawGeofence()");
@@ -418,6 +462,7 @@ public class MapsActivity extends FragmentActivity
                 .fillColor( Color.argb(100, 150,150,150) )
                 .radius( GEOFENCE_RADIUS );
         geoFenceLimits = mMap.addCircle( circleOptions );
+        geoFenceLimits.setClickable(true);
     }
 
     /** Called when the user clicks a marker. */
@@ -445,5 +490,11 @@ public class MapsActivity extends FragmentActivity
     @Override
     public void onMarkerDragEnd(Marker marker) {
 
+    }
+
+    @Override
+    public void onCircleClick(Circle circle) {
+        Toast.makeText(this, "Set Radio", Toast.LENGTH_SHORT).show();
+        openDialogRadioGeofence();
     }
 }
