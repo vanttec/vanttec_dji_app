@@ -56,30 +56,14 @@ public class MapsActivity extends FragmentActivity
         OnMarkerDragListener,
         ActivityCompat.OnRequestPermissionsResultCallback {
 
-        private GoogleMap mMap;
-
-        private Spinner sp_settings;
-
-        static  final int LOCATE_ME = 0;
-        static  final int LOCATE_DRONE = 1;
-        static  final int SET_DEST = 2;
-        static  final int SET_DEST_MANUALLY = 3;
-        static  final int RETURN_HOME = 4;
-        static  final int ADD_GEOFENCE = 5;
-        static  final int ADD_GEOFENCE_MANUALLY = 6;
-
-
-        private LinearLayout lyt_dest;
-        private Button btn_start, btn_stop, btn_clear, btn_add;
-
-
-        static final LatLng cetec = new LatLng(25.649, -100.2897398);
-        private LatLng MyLatLng, droneLatLng; //phone, drone location
-        private Marker droneMarker;
-
-        private List<Marker> markers = new ArrayList<Marker>();
-
-        private Boolean isAddManually = false;
+    //constants
+    static  final int LOCATE_ME = 0;
+    static  final int LOCATE_DRONE = 1;
+    static  final int SET_DEST = 2;
+    static  final int SET_DEST_MANUALLY = 3;
+    static  final int RETURN_HOME = 4;
+    static  final int ADD_GEOFENCE = 5;
+    static  final int ADD_GEOFENCE_MANUALLY = 6;
 
     /**
      * Request code for location permission request.
@@ -87,6 +71,22 @@ public class MapsActivity extends FragmentActivity
      * @see #onRequestPermissionsResult(int, String[], int[])
      */
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 1;
+
+    //UI variables
+    private Spinner sp_settings;
+    private LinearLayout lyt_dest;
+    private Button btn_start, btn_stop, btn_clear, btn_add;
+
+    //Google vars
+    private GoogleMap mMap;
+
+    static final LatLng cetec = new LatLng(25.649, -100.2897398);
+    private LatLng MyLatLng, droneLatLng; //phone, drone location
+
+    private Marker droneMarker;
+    private List<Marker> markers = new ArrayList<Marker>();
+
+    private Boolean isAddManually = false;
 
     /**
      * Flag indicating whether a requested permission has been denied after returning in
@@ -98,8 +98,9 @@ public class MapsActivity extends FragmentActivity
     //Geofence variables
     private GeofencingClient geofencingClient;
     private List<Geofence> geoList = new ArrayList<Geofence>();
-    private int GEOFENCE_RADIUS = 100;
+    private double GEOFENCE_RADIUS = 100;
     private Marker geofenceMarker;
+
     private Circle geoFenceLimits;
 
     @Override
@@ -125,8 +126,6 @@ public class MapsActivity extends FragmentActivity
                 });
 
         initUI();
-
-
         //geofencingClient = LocationServices.getGeofencingClient(this);
     }
 
@@ -227,7 +226,7 @@ public class MapsActivity extends FragmentActivity
         switch (v.getId()) {
             case R.id.add: {
                 if (isAddManually) {
-                    openDialog(SET_DEST_MANUALLY);
+                    openDialogDest();
                 } else {
                     addMarker(MyLatLng);
                 }
@@ -265,11 +264,12 @@ public class MapsActivity extends FragmentActivity
                 break;
             }
             case ADD_GEOFENCE:{
+                removeGeofence();
                 addGeoMarker(MyLatLng);
                 break;
             }
             case ADD_GEOFENCE_MANUALLY:{
-                openDialog(ADD_GEOFENCE_MANUALLY);
+                openDialogGeofence();
                 break;
             }
             default:
@@ -301,14 +301,16 @@ public class MapsActivity extends FragmentActivity
     }
 
     public void addGeoMarker(LatLng latlng) {
-        MarkerOptions a = new MarkerOptions()
-                .position(latlng)
-                .draggable(true)
-                .title("GEOFENCE");
+        if(geofenceMarker == null) {
+            MarkerOptions a = new MarkerOptions()
+                    .position(latlng)
+                    .draggable(true)
+                    .title("GEOFENCE");
 
-        geofenceMarker = mMap.addMarker(a);
+            geofenceMarker = mMap.addMarker(a);
+        }
+
         geofenceMarker.setPosition(latlng);
-
         moveToLocation(latlng);
     }
 
@@ -321,7 +323,7 @@ public class MapsActivity extends FragmentActivity
         markers.clear();
     }
 
-    public void openDialog(final int option) {
+    public void openDialogDest() {
         final AlertDialog.Builder mBuilder = new AlertDialog.Builder(MapsActivity.this);
         final View dialogView = getLayoutInflater().inflate(R.layout.dialog_destination, null);
 
@@ -340,17 +342,6 @@ public class MapsActivity extends FragmentActivity
                     final Double lat = Double.parseDouble(latText.getText().toString());
                     final Double lng = Double.parseDouble(lngText.getText().toString());
                     final Double alt = Double.parseDouble(altText.getText().toString());
-
-                    switch (option) {
-                        case SET_DEST_MANUALLY: {
-                            addMarker(new LatLng(lat, lng));
-                            break;
-                        }
-                        case ADD_GEOFENCE_MANUALLY: {
-                            addGeofence(new LatLng(lat, lng));
-                            break;
-                        }
-                    }
                     addMarker(new LatLng(lat, lng));
                     dialog.cancel();
                 } else {
@@ -365,36 +356,61 @@ public class MapsActivity extends FragmentActivity
         dialog.show();
     }
 
-    /** Called when the user clicks a marker. */
-    @Override
-    public boolean onMarkerClick(final Marker marker) {
-        Toast.makeText(this, "pos: " + marker.getPosition(), Toast.LENGTH_SHORT).show();
-        if(marker.equals(geofenceMarker)) {
-            Toast.makeText(this, "Geo Marker", Toast.LENGTH_SHORT).show();
-            addGeofenceCircle();
-        }
+    public void openDialogGeofence() {
+        final AlertDialog.Builder mBuilder = new AlertDialog.Builder(MapsActivity.this);
+        final View dialogView = getLayoutInflater().inflate(R.layout.dialog_geofence, null);
 
-        return false;
+        final EditText latText = (EditText) dialogView.findViewById(R.id.latitude);
+        final EditText lngText = (EditText) dialogView.findViewById(R.id.longitude);
+        final EditText radioText = (EditText) dialogView.findViewById(R.id.radio);
+        Button btnAdd = (Button) dialogView.findViewById(R.id.add);
+
+        mBuilder.setView(dialogView);
+        final AlertDialog dialog = mBuilder.create();
+
+        btnAdd.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(!latText.getText().toString().isEmpty() && !lngText.getText().toString().isEmpty()) {
+                    final Double lat = Double.parseDouble(latText.getText().toString());
+                    final Double lng = Double.parseDouble(lngText.getText().toString());
+
+                    if(!radioText.getText().toString().isEmpty()) {
+                        final Double radio = Double.parseDouble(radioText.getText().toString());
+                        GEOFENCE_RADIUS = radio;
+                    }
+
+                    addGeoMarker(new LatLng(lat, lng));
+                    addGeofence();
+                    dialog.cancel();
+                } else {
+                    Toast toast = Toast.makeText(getApplicationContext(),
+                            "Set a lat & lng to continue",
+                            Toast.LENGTH_SHORT);
+                    toast.show();
+                }
+            }
+        });
+
+        dialog.show();
     }
 
-
     //Draw the circle for now
-    public void addGeofence(LatLng latLng) {
+    public void addGeofence() {
         Log.d("call", "drawGeofence()");
-
-        if(geofenceMarker == null) {
-            addGeoMarker(latLng);
-        }
-
+        removeGeofence();
         addGeofenceCircle();
     }
 
-    private void addGeofenceCircle() {
+    //remove circle for now
+    private void removeGeofence() {
         if ( geoFenceLimits != null ) {
             Log.d("call", "fence limits not null");
             geoFenceLimits.remove();
         }
+    }
 
+    private void addGeofenceCircle() {
         Toast.makeText(this, "pos: " + geofenceMarker.getPosition(), Toast.LENGTH_SHORT).show();
         CircleOptions circleOptions = new CircleOptions()
                 .center( geofenceMarker.getPosition() )
@@ -402,6 +418,18 @@ public class MapsActivity extends FragmentActivity
                 .fillColor( Color.argb(100, 150,150,150) )
                 .radius( GEOFENCE_RADIUS );
         geoFenceLimits = mMap.addCircle( circleOptions );
+    }
+
+    /** Called when the user clicks a marker. */
+    @Override
+    public boolean onMarkerClick(final Marker marker) {
+        Toast.makeText(this, "pos: " + marker.getPosition(), Toast.LENGTH_SHORT).show();
+        if(marker.equals(geofenceMarker)) {
+            Toast.makeText(this, "Geo Marker", Toast.LENGTH_SHORT).show();
+            addGeofence();
+        }
+
+        return false;
     }
 
     @Override
