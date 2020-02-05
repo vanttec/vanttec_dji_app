@@ -123,6 +123,7 @@ public class MapsActivity extends FragmentActivity
                         // Got last known location. In some rare situations this can be null.
                         if (location != null) {
                             MyLatLng = new LatLng(location.getLatitude(),location.getLongitude());
+                            moveToLocation(MyLatLng);
                         }
                     }
                 });
@@ -282,11 +283,12 @@ public class MapsActivity extends FragmentActivity
 
     @Override
     public void onNothingSelected(AdapterView<?> parent) {
-        moveToLocation(MyLatLng);
+        //moveToLocation(MyLatLng);
     }
 
     public void moveToLocation(LatLng loc) {
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(loc,17));
+        if(loc != null)
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(loc,17));
     }
 
     public void addMarker(LatLng latlng) {
