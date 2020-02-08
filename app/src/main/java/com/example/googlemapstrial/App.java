@@ -9,13 +9,11 @@ import android.app.Application;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
-import android.os.Looper;
 import android.os.Handler;
+import android.os.Looper;
+import androidx.core.content.ContextCompat;
 import android.util.Log;
 import android.widget.Toast;
-
-import androidx.core.content.ContextCompat;
-
 
 import dji.common.error.DJIError;
 import dji.common.error.DJISDKError;
@@ -28,6 +26,7 @@ import dji.sdk.sdkmanager.DJISDKInitEvent;
 import dji.sdk.sdkmanager.DJISDKManager;
 
 public class App extends Application {
+
     public static final String FLAG_CONNECTION_CHANGE = "mediaManager_demo_connection_change";
 
     private static BaseProduct mProduct;
@@ -46,7 +45,6 @@ public class App extends Application {
 
     public App() {
     }
-
     /**
      * This function is used to get the instance of DJIBaseProduct.
      * If no product is connected, it returns null.
@@ -100,6 +98,7 @@ public class App extends Application {
         return isCameraModuleAvailable() &&
                 (null != App.getProductInstance().getCamera().getPlaybackManager());
     }
+
 
     @Override
     public void onCreate() {
@@ -212,4 +211,5 @@ public class App extends Application {
             getApplicationContext().sendBroadcast(intent);
         }
     };
+
 }

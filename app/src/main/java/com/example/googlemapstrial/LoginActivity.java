@@ -45,13 +45,6 @@ import dji.sdk.useraccount.UserAccountManager;
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
 
     private static final String TAG = LoginActivity.class.getName();
-    /*protected Button loginBtn;
-    protected Button logoutBtn;
-    protected TextView bindingStateTV;
-    protected TextView appActivationStateTV;
-    private AppActivationManager appActivationManager;
-    private AppActivationState.AppActivationStateListener activationStateListener;
-    private AircraftBindingState.AircraftBindingStateListener bindingStateListener;*/
 
     private TextView mTextConnectionStatus;
     private TextView mTextProduct;
@@ -208,7 +201,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     public void onResume() {
         Log.e(TAG, "onResume");
         super.onResume();
-        //updateTitleBar();
+        updateTitleBar();
     }
 
     @Override
@@ -247,8 +240,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
         mBtnOpen = (Button) findViewById(R.id.btn_open);
         mBtnOpen.setOnClickListener(this);
-        //mBtnOpen.setEnabled(false);
-
+        mBtnOpen.setEnabled(false);
     }
 
     protected BroadcastReceiver mReceiver = new BroadcastReceiver() {
@@ -265,7 +257,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         if (product != null) {
             if(product.isConnected()) {
                 //The product is connected
-                showToast(App.getProductInstance().getModel() + " Connected");
+                //showToast(App.getProductInstance().getModel() + " Connected");
                 ret = true;
             } else {
                 if(product instanceof Aircraft) {

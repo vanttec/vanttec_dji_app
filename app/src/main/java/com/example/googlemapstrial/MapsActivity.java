@@ -7,6 +7,7 @@ import androidx.fragment.app.FragmentActivity;
 
 import android.Manifest;
 import android.app.AlertDialog;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.location.Location;
@@ -41,6 +42,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -78,6 +80,7 @@ public class MapsActivity extends FragmentActivity
     private Spinner sp_settings;
     private LinearLayout lyt_dest;
     private Button btn_start, btn_stop, btn_clear, btn_add;
+    private FloatingActionButton btn_camera;
 
     //Google vars
     private GoogleMap mMap;
@@ -155,6 +158,9 @@ public class MapsActivity extends FragmentActivity
         btn_start.setOnClickListener(this);
         btn_stop.setOnClickListener(this);
         btn_clear.setOnClickListener(this);
+
+        btn_camera = (FloatingActionButton) findViewById(R.id.floatingActionButton);
+        btn_camera.setOnClickListener(this);
     }
 
     /**
@@ -239,6 +245,10 @@ public class MapsActivity extends FragmentActivity
             case R.id.clear: {
                 clearMarkers();
                 break;
+            }
+            case R.id.floatingActionButton: {
+                Intent intent = new Intent(this, CameraActivity.class);
+                startActivity(intent);
             }
         }
     }
