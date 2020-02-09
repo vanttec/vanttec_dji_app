@@ -15,6 +15,7 @@ import dji.common.error.DJISDKError;
 import dji.sdk.base.BaseComponent;
 import dji.sdk.base.BaseProduct;
 import dji.sdk.camera.Camera;
+import dji.sdk.flightcontroller.FlightController;
 import dji.sdk.products.Aircraft;
 import dji.sdk.products.HandHeld;
 import dji.sdk.sdkmanager.DJISDKInitEvent;
@@ -56,6 +57,17 @@ public class DemoApplication extends Application {
         return (Aircraft) getProductInstance();
     }
 
+
+    public static synchronized FlightController getFlightController() {
+        Log.d("TAG", "getFlightController");
+        if (mProduct != null && mProduct.isConnected()) {
+            if (mProduct instanceof Aircraft) {
+                return ((Aircraft) mProduct).getFlightController();
+            }
+        }
+        return null;
+    }
+
     public static synchronized Camera getCameraInstance() {
 
         if (getProductInstance() == null) return null;
@@ -93,7 +105,6 @@ public class DemoApplication extends Application {
         return isCameraModuleAvailable() &&
                 (null != DemoApplication.getProductInstance().getCamera().getPlaybackManager());
     }
-
 
     @Override
     public void onCreate() {

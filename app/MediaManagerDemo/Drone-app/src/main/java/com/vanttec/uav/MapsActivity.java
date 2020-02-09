@@ -2,6 +2,7 @@ package com.vanttec.uav;
 
 import android.Manifest;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
@@ -46,6 +47,10 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+
+import dji.common.flightcontroller.FlightControllerState;
+import dji.sdk.flightcontroller.FlightController;
 
 
 public class MapsActivity extends FragmentActivity
@@ -59,6 +64,8 @@ public class MapsActivity extends FragmentActivity
         OnMarkerDragListener,
         OnCircleClickListener,
         ActivityCompat.OnRequestPermissionsResultCallback {
+
+    private static final String TAG = MapsActivity.class.getName();
 
     //constants
     static  final int LOCATE_ME = 0;
@@ -132,7 +139,44 @@ public class MapsActivity extends FragmentActivity
                 });
 
         initUI();
+
         //geofencingClient = LocationServices.getGeofencingClient(this);
+    }
+
+    private void initFlightController() {
+        Log.d(TAG, "initFlightController");
+        FlightController mFlightController = DemoApplication.getFlightController();
+
+        if (mFlightController != null) {
+            mFlightController.setStateCallback(new FlightControllerState.Callback() {
+
+                @Override
+                public void onUpdate(FlightControllerState djiFlightControllerCurrentState) {
+                    double droneLocationLat = djiFlightControllerCurrentState.getAircraftLocation().getLatitude();
+                    double droneLocationLng = djiFlightControllerCurrentState.getAircraftLocation().getLongitude();
+                    droneLatLng = new LatLng(droneLocationLat, droneLocationLng);
+                    Log.d(TAG, "onUpdate drone latlng" + droneLatLng);
+                    updateDroneLocation();
+                }
+            });
+        }
+    }
+
+    private void updateDroneLocation() {
+
+        if(droneMarker == null) {
+            MarkerOptions a = new MarkerOptions()
+                    .position(droneLatLng)
+                    .title("Drone :)")
+                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.drone_pin));
+            droneMarker = mMap.addMarker(a);
+        } else {
+            droneMarker.setPosition(droneLatLng);
+        }
+
+        moveToLocation(droneLatLng);
+        Log.d(TAG, "updateDroneLocation");
+        Toast.makeText(this, "drone \n" + droneLatLng, Toast.LENGTH_SHORT).show();
     }
 
     private void initUI() {
@@ -183,13 +227,15 @@ public class MapsActivity extends FragmentActivity
         enableMyLocation();
 
         //init Marker
-        MarkerOptions a = new MarkerOptions().position(cetec).title("Drone").icon(BitmapDescriptorFactory.fromResource(R.drawable.drone_pin));
+        /*MarkerOptions a = new MarkerOptions().position(cetec).title("Drone").icon(BitmapDescriptorFactory.fromResource(R.drawable.drone_pin));
         //Icons made by <a href="https://www.flaticon.com/authors/smashicons" title="Smashicons">Smashicons</a> from <a href="https://www.flaticon.com/" title="Flaticon"> www.flaticon.com</a>
-        droneMarker = mMap.addMarker(a);
+        droneMarker = mMap.addMarker(a);*/
 
         // Set a listener for marker click.
         mMap.setOnMarkerClickListener(this);
         mMap.setOnCircleClickListener(this);
+
+        initFlightController();
     }
 
     /**
@@ -247,9 +293,10 @@ public class MapsActivity extends FragmentActivity
                 break;
             }
             case R.id.floatingActionButton: {
-                Intent intent = new Intent(this, DefaultLayoutActivity.class);
+                finish();
+                /*Intent intent = new Intent(this, DefaultLayoutActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                startActivity(intent);
+                startActivity(intent);*/
             }
         }
     }
@@ -265,7 +312,7 @@ public class MapsActivity extends FragmentActivity
                 break;
             }
             case LOCATE_DRONE: {
-                moveToLocation(cetec);
+                moveToLocation(droneLatLng);
                 break;
             }
             case SET_DEST: {
@@ -454,7 +501,7 @@ public class MapsActivity extends FragmentActivity
 
     //Draw the circle for now
     public void addGeofence() {
-        Log.d("call", "drawGeofence()");
+        Log.d(TAG, "drawGeofence()");
         removeGeofence();
         addGeofenceCircle();
     }

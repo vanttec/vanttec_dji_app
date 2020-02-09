@@ -9,7 +9,10 @@
     <option name="TOOL_WINDOW_CONFIGURED_FILTER" value="Show only selected application" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="9eb49134-99fc-42a2-8a16-36ad24822abc" name="Default Changelist" comment="" />
+    <list default="true" id="9eb49134-99fc-42a2-8a16-36ad24822abc" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+    </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -33,15 +36,43 @@
     </system>
   </component>
   <component name="FileEditorManager">
-    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
+    <leaf>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/Drone-app/src/main/java/com/vanttec/uav/DemoApplication.java">
+        <entry file="file://$PROJECT_DIR$/Drone-app/src/main/java/com/vanttec/uav/ConnectionActivity.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="169">
-              <caret line="93" column="72" selection-start-line="93" selection-start-column="62" selection-end-line="93" selection-end-column="72" />
+            <state relative-caret-position="424">
+              <caret line="84" column="24" selection-start-line="84" selection-start-column="8" selection-end-line="84" selection-end-column="24" />
               <folding>
                 <element signature="imports" expanded="true" />
+                <element signature="method#checkAndRequestPermissions#0;class#ConnectionActivity#0" />
+                <element signature="docComment;method#onRequestPermissionsResult#0;class#ConnectionActivity#0" />
+                <element signature="method#onRequestPermissionsResult#0;class#ConnectionActivity#0" />
+                <element signature="method#startSDKRegistration#0;class#ConnectionActivity#0" />
+                <element signature="method#showToast#0;class#ConnectionActivity#0" />
+                <element signature="method#updateVersion#0;class#ConnectionActivity#0" />
+                <element signature="method#loginAccount#0;class#ConnectionActivity#0" />
+                <element signature="method#tryUpdateFirmwareVersionWithListener#0;class#ConnectionActivity#0" />
+                <element signature="method#removeFirmwareVersionListener#0;class#ConnectionActivity#0" />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/Drone-app/src/main/AndroidManifest.xml">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="161">
+              <caret line="15" column="58" selection-start-line="15" selection-start-column="58" selection-end-line="15" selection-end-column="58" />
+            </state>
+          </provider>
+          <provider editor-type-id="android-manifest" />
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/Drone-app/src/main/java/com/vanttec/uav/MApplication.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="340">
+              <caret line="23" column="35" lean-forward="true" selection-start-line="23" selection-start-column="8" selection-end-line="23" selection-end-column="35" />
             </state>
           </provider>
         </entry>
@@ -49,107 +80,104 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Drone-app/src/main/java/com/vanttec/uav/DefaultLayoutActivity.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="251">
-              <caret line="28" selection-start-line="28" selection-end-line="28" />
+            <state relative-caret-position="306">
+              <caret line="34" column="61" selection-start-line="34" selection-start-column="49" selection-end-line="34" selection-end-column="61" />
             </state>
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/settings.gradle">
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/Drone-app/src/main/java/com/vanttec/uav/DemoApplication.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="17">
-              <caret line="1" lean-forward="true" selection-start-line="1" selection-end-line="1" />
+            <state relative-caret-position="373">
+              <caret line="61" column="44" lean-forward="true" selection-start-line="61" selection-start-column="44" selection-end-line="61" selection-end-column="44" />
+              <folding>
+                <element signature="imports" expanded="true" />
+                <element signature="e#995#996#0" expanded="true" />
+                <element signature="e#1033#1034#0" expanded="true" />
+                <element signature="method#getCameraInstance#1;class#DemoApplication#0" />
+              </folding>
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/Drone-app/proguard-rules.pro">
+        <entry file="file://$PROJECT_DIR$/Drone-app/src/main/java/com/vanttec/uav/MapsActivity.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="319">
-              <caret line="115" column="15" selection-start-line="115" selection-start-column="15" selection-end-line="115" selection-end-column="15" />
+            <state relative-caret-position="373">
+              <caret line="157" column="70" lean-forward="true" selection-start-line="157" selection-start-column="70" selection-end-line="157" selection-end-column="70" />
+              <folding>
+                <element signature="imports" expanded="true" />
+                <element signature="e#5156#6308#0" />
+                <element signature="e#7659#8324#0" />
+                <element signature="e#8506#8828#0" />
+                <element signature="e#8834#9122#0" />
+                <element signature="e#10991#11101#0" />
+                <element signature="e#11255#11633#0" />
+                <element signature="e#12030#12218#0" />
+                <element signature="e#12224#13759#0" />
+                <element signature="e#13765#15487#0" />
+                <element signature="e#15493#17050#0" />
+                <element signature="e#17221#17425#0" />
+                <element signature="e#17431#17941#0" />
+                <element signature="e#17947#18335#0" />
+                <element signature="e#18341#18408#0" />
+                <element signature="e#18414#18476#0" />
+                <element signature="e#18482#18547#0" />
+                <element signature="e#18553#18720#0" />
+              </folding>
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/gradle/wrapper/gradle-wrapper.properties">
-          <provider selected="true" editor-type-id="text-editor" />
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/Drone-app/build.gradle">
+        <entry file="file://$PROJECT_DIR$/Drone-app/src/main/java/com/vanttec/uav/MainActivity.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-1292">
-              <caret line="15" column="28" selection-start-line="15" selection-start-column="28" selection-end-line="15" selection-end-column="28" />
+            <state relative-caret-position="186">
+              <caret line="240" column="27" selection-start-line="240" selection-start-column="12" selection-end-line="240" selection-end-column="27" />
+              <folding>
+                <element signature="imports" expanded="true" />
+                <element signature="e#8713#10101#1" />
+                <element signature="e#15018#16990#0" />
+              </folding>
             </state>
           </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/build.gradle">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="136">
-              <caret line="8" column="39" selection-start-line="8" selection-start-column="39" selection-end-line="8" selection-end-column="39" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/gradle.properties">
-          <provider selected="true" editor-type-id="text-editor" />
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/local.properties">
-          <provider selected="true" editor-type-id="text-editor" />
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/Drone-app/src/main/res/layout/activity_default_layout.xml">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="17">
-              <caret line="12" column="68" selection-start-line="12" selection-start-column="68" selection-end-line="12" selection-end-column="68" />
-            </state>
-          </provider>
-          <provider editor-type-id="android-designer2" />
         </entry>
       </file>
     </leaf>
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>refreshSDK</find>
-      <find>Intent</find>
-      <find>startAc</find>
-      <find>refreshSDKRelativeUI</find>
-      <find>startAct</find>
-      <find>DefaultLayoutActivity</find>
-      <find>DefaultLayout</find>
-      <find>Defaul</find>
-      <find>open</find>
-      <find>onCreate</find>
-      <find>btn_open</find>
-      <find>onPause</find>
-      <find>back_btn</find>
-      <find>key</find>
-      <find>dji_api_key</find>
-      <find>updateTitleBar</find>
-      <find>resume_btn</find>
       <find>camera</find>
+      <find>Toast.makeText(this, &quot;MyLocation button clicked&quot;, Toast.LENGTH_SHORT).show();</find>
+      <find>Main</find>
+      <find>ata</find>
+      <find>attachBaseContext</find>
+      <find>MApplication</find>
+      <find>Base</find>
+      <find>DemoApplication</find>
+      <find>Context</find>
+      <find>onCreateViewHolder</find>
+      <find>getName</find>
+      <find>DemoA</find>
+      <find>MainA</find>
+      <find>onCl</find>
+      <find>cetec</find>
+      <find>droneLatLng</find>
+      <find>LOCATE</find>
+      <find>setPosition</find>
+      <find>&quot;call</find>
+      <find>init</find>
+      <find>TAG</find>
+      <find>getApplicationContext</find>
+      <find>DemoAl</find>
+      <find>layou</find>
+      <find>FLA</find>
+      <find>Demo</find>
       <find>initMediaManager</find>
-      <find>Camera</find>
-      <find>getCameraInstance</find>
-      <find>getCamera</find>
-      <find>getCamera(</find>
-      <find>mMediaManagerBtn</find>
-      <find>btn_mediaManager</find>
-      <find>FPVWidget</find>
-      <find>DefaultL</find>
-      <find>Drone</find>
-      <find>Med</find>
-      <find>MODULE</find>
+      <find>Log</find>
+      <find>initFlightController</find>
+      <find>registerReceiver</find>
     </findStrings>
     <dirStrings>
       <dir>D:\Users\mimit\Documents\vanttec\vanttec_uav.3.0\MediaManagerDemo\app\src\debug\res</dir>
@@ -177,12 +205,16 @@
         <option value="$PROJECT_DIR$/app/src/debug/res/values/google_maps_api.xml" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/vanttec/uav/ConnectionActivity.java" />
         <option value="$PROJECT_DIR$/settings.gradle" />
+        <option value="$PROJECT_DIR$/Drone-app/src/main/java/com/vanttec/uav/DefaultLayoutActivity.java" />
+        <option value="$PROJECT_DIR$/Drone-app/src/main/java/com/vanttec/uav/DemoApplication.java" />
+        <option value="$PROJECT_DIR$/Drone-app/src/main/java/com/vanttec/uav/MapsActivity.java" />
+        <option value="$PROJECT_DIR$/Drone-app/src/main/java/com/vanttec/uav/ConnectionActivity.java" />
       </list>
     </option>
   </component>
   <component name="ProjectFrameBounds" extendedState="6">
     <option name="x" value="-7" />
-    <option name="width" value="987" />
+    <option name="width" value="697" />
     <option name="height" value="735" />
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
@@ -192,8 +224,6 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scope" />
-      <pane id="PackagesPane" />
       <pane id="AndroidView">
         <subPane>
           <expand>
@@ -234,6 +264,18 @@
             </path>
             <path>
               <item name="MediaManagerDemo" type="1abcf292:AndroidViewProjectNode" />
+              <item name="Drone-app" type="feadf853:AndroidModuleNode" />
+              <item name="res" type="d4f16f75:AndroidResFolderNode" />
+              <item name="layout" type="ddeffd01:AndroidResFolderTypeNode" />
+            </path>
+            <path>
+              <item name="MediaManagerDemo" type="1abcf292:AndroidViewProjectNode" />
+              <item name="Drone-app" type="feadf853:AndroidModuleNode" />
+              <item name="res" type="d4f16f75:AndroidResFolderNode" />
+              <item name="values" type="ddeffd01:AndroidResFolderTypeNode" />
+            </path>
+            <path>
+              <item name="MediaManagerDemo" type="1abcf292:AndroidViewProjectNode" />
               <item name="Gradle Scripts" type="ae0cef3a:AndroidBuildScriptsGroupNode" />
             </path>
           </expand>
@@ -241,6 +283,8 @@
         </subPane>
       </pane>
       <pane id="ProjectPane" />
+      <pane id="PackagesPane" />
+      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -278,7 +322,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager">
+  <component name="RunManager" selected="Android App.Drone-app">
     <configuration default="true" type="AndroidJUnit" factoryName="Android JUnit">
       <option name="TEST_OBJECT" value="class" />
       <option name="WORKING_DIRECTORY" value="$MODULE_DIR$" />
@@ -339,8 +383,7 @@
         <option name="Android.Gradle.BeforeRunTask" enabled="true" />
       </method>
     </configuration>
-    <configuration name="app" type="AndroidRunConfigurationType" factoryName="Android App" activateToolWindowBeforeRun="false">
-      <module name="app" />
+    <configuration name="drone-app" type="AndroidRunConfigurationType" factoryName="Android App" activateToolWindowBeforeRun="false">
       <option name="DEPLOY" value="true" />
       <option name="DEPLOY_APK_FROM_BUNDLE" value="false" />
       <option name="DEPLOY_AS_INSTANT" value="false" />
@@ -420,14 +463,14 @@
       <window_info id="Resources Explorer" order="7" />
       <window_info id="Capture Tool" order="8" />
       <window_info anchor="bottom" id="Find" order="0" weight="0.71088433" />
-      <window_info anchor="bottom" id="Run" order="1" weight="0.52040815" />
+      <window_info anchor="bottom" id="Run" order="1" weight="0.292517" />
       <window_info anchor="bottom" id="Logcat" order="2" weight="0.32993197" />
       <window_info anchor="bottom" id="TODO" order="3" />
       <window_info anchor="bottom" id="Debug" order="4" weight="0.32993197" />
       <window_info anchor="bottom" id="Terminal" order="5" weight="0.32993197" />
       <window_info anchor="bottom" id="Event Log" order="6" side_tool="true" />
       <window_info anchor="bottom" id="Version Control" order="7" />
-      <window_info anchor="bottom" id="Build" order="8" visible="true" weight="0.35714287" />
+      <window_info anchor="bottom" id="Build" order="8" weight="0.35714287" />
       <window_info anchor="bottom" id="Android Profiler" order="9" />
       <window_info anchor="right" id="Preview" order="0" weight="0.32980332" />
       <window_info anchor="right" id="Device File Explorer" order="1" side_tool="true" />
@@ -447,14 +490,14 @@
       <window_info id="Resources Explorer" order="7" />
       <window_info id="Capture Tool" order="8" />
       <window_info anchor="bottom" id="Find" order="0" weight="0.71088433" />
-      <window_info anchor="bottom" id="Run" order="1" weight="0.52040815" />
+      <window_info anchor="bottom" id="Run" order="1" weight="0.292517" />
       <window_info anchor="bottom" id="Logcat" order="2" weight="0.32993197" />
       <window_info anchor="bottom" id="TODO" order="3" />
-      <window_info anchor="bottom" id="Debug" order="4" />
-      <window_info anchor="bottom" id="Terminal" order="5" />
+      <window_info anchor="bottom" id="Debug" order="4" weight="0.32993197" />
+      <window_info anchor="bottom" id="Terminal" order="5" weight="0.32993197" />
       <window_info anchor="bottom" id="Event Log" order="6" side_tool="true" />
       <window_info anchor="bottom" id="Version Control" order="7" />
-      <window_info anchor="bottom" id="Build" order="8" visible="true" weight="0.35714287" />
+      <window_info anchor="bottom" id="Build" order="8" weight="0.35714287" />
       <window_info anchor="bottom" id="Android Profiler" order="9" />
       <window_info anchor="right" id="Preview" order="0" weight="0.32980332" />
       <window_info anchor="right" id="Device File Explorer" order="1" side_tool="true" />
@@ -504,16 +547,6 @@
       </provider>
       <provider editor-type-id="android-designer2" />
     </entry>
-    <entry file="file://$PROJECT_DIR$/Drone-app/src/main/java/com/vanttec/uav/MapsActivity.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-4">
-          <caret line="252" column="13" lean-forward="true" selection-start-line="252" selection-start-column="13" selection-end-line="252" selection-end-column="13" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/Drone-app/src/main/res/values/strings.xml">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="136">
@@ -521,50 +554,7 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/vanttec/uav/MapsActivity2.java">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Drone-app/src/main/AndroidManifest.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="561">
-          <caret line="33" column="17" lean-forward="true" selection-start-line="33" selection-start-column="17" selection-end-line="33" selection-end-column="17" />
-          <folding>
-            <element signature="e#2098#2116#0" expanded="true" />
-            <element signature="e#2903#2928#0" expanded="true" />
-            <element signature="e#3236#3257#0" expanded="true" />
-            <element signature="e#4438#4467#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-      <provider editor-type-id="android-manifest" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Drone-app/src/main/java/com/vanttec/uav/ConnectionActivity.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2669">
-          <caret line="376" column="4" selection-start-line="376" selection-start-column="4" selection-end-line="376" selection-end-column="4" />
-          <folding>
-            <element signature="imports" expanded="true" />
-            <element signature="method#onCreate#0;class#ConnectionActivity#0" />
-            <element signature="method#checkAndRequestPermissions#0;class#ConnectionActivity#0" />
-            <element signature="docComment;method#onRequestPermissionsResult#0;class#ConnectionActivity#0" />
-            <element signature="method#onRequestPermissionsResult#0;class#ConnectionActivity#0" />
-            <element signature="method#startSDKRegistration#0;class#ConnectionActivity#0" />
-            <element signature="e#9004#9095#0" expanded="true" />
-            <element signature="method#updateTitleBar#0;class#ConnectionActivity#0" />
-            <element signature="method#showToast#0;class#ConnectionActivity#0" />
-            <element signature="method#updateVersion#0;class#ConnectionActivity#0" />
-            <element signature="method#onClick#0;class#ConnectionActivity#0" />
-            <element signature="method#refreshSDKRelativeUI#0;class#ConnectionActivity#0" />
-            <element signature="e#12126#12154#0" expanded="true" />
-            <element signature="e#12337#12365#0" expanded="true" />
-            <element signature="e#12410#12435#0" expanded="true" />
-            <element signature="method#loginAccount#0;class#ConnectionActivity#0" />
-            <element signature="method#tryUpdateFirmwareVersionWithListener#0;class#ConnectionActivity#0" />
-            <element signature="method#removeFirmwareVersionListener#0;class#ConnectionActivity#0" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/vanttec/uav/MapsActivity2.java" />
     <entry file="file://$PROJECT_DIR$/Drone-app/src/debug/res/values/google_maps_api.xml">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="374">
@@ -580,34 +570,6 @@
       </provider>
       <provider editor-type-id="android-designer2" />
     </entry>
-    <entry file="file://$PROJECT_DIR$/Drone-app/src/main/java/com/vanttec/uav/MApplication.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="68">
-          <caret line="7" column="13" selection-start-line="7" selection-start-column="13" selection-end-line="7" selection-end-column="13" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Drone-app/src/main/java/com/vanttec/uav/MainActivity.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="121">
-          <caret line="239" column="33" selection-start-line="239" selection-start-column="17" selection-end-line="239" selection-end-column="33" />
-          <folding>
-            <element signature="imports" expanded="true" />
-            <element signature="e#8713#10101#1" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Drone-app/src/main/java/com/vanttec/uav/DemoApplication.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="169">
-          <caret line="93" column="72" selection-start-line="93" selection-start-column="62" selection-end-line="93" selection-end-column="72" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/add234da81f90a27796a477386136535/res/values/values.xml">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="12954">
@@ -615,26 +577,12 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Drone-app/src/main/res/layout/activity_default_layout.xml">
+    <entry file="file://$PROJECT_DIR$/settings.gradle">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="17">
-          <caret line="12" column="68" selection-start-line="12" selection-start-column="68" selection-end-line="12" selection-end-column="68" />
+          <caret line="1" selection-start-line="1" selection-end-line="1" />
         </state>
       </provider>
-      <provider editor-type-id="android-designer2" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Drone-app/src/main/java/com/vanttec/uav/DefaultLayoutActivity.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="251">
-          <caret line="28" selection-start-line="28" selection-end-line="28" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/gradle.properties">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/local.properties">
-      <provider selected="true" editor-type-id="text-editor" />
     </entry>
     <entry file="file://$PROJECT_DIR$/Drone-app/proguard-rules.pro">
       <provider selected="true" editor-type-id="text-editor">
@@ -646,13 +594,6 @@
     <entry file="file://$PROJECT_DIR$/gradle/wrapper/gradle-wrapper.properties">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
-    <entry file="file://$PROJECT_DIR$/Drone-app/build.gradle">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-1292">
-          <caret line="15" column="28" selection-start-line="15" selection-start-column="28" selection-end-line="15" selection-end-column="28" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/build.gradle">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="136">
@@ -660,12 +601,119 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/settings.gradle">
+    <entry file="file://$PROJECT_DIR$/gradle.properties">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/local.properties">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Drone-app/src/main/java/com/vanttec/uav/MApplication.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="17">
-          <caret line="1" lean-forward="true" selection-start-line="1" selection-end-line="1" />
+        <state relative-caret-position="340">
+          <caret line="23" column="35" lean-forward="true" selection-start-line="23" selection-start-column="8" selection-end-line="23" selection-end-column="35" />
         </state>
       </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Drone-app/src/main/res/layout/activity_default_layout.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="204">
+          <caret line="12" column="68" selection-start-line="12" selection-start-column="68" selection-end-line="12" selection-end-column="68" />
+        </state>
+      </provider>
+      <provider editor-type-id="android-designer2" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Drone-app/build.gradle">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="329">
+          <caret line="86" column="15" selection-start-line="86" selection-start-column="4" selection-end-line="86" selection-end-column="15" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Drone-app/src/main/java/com/vanttec/uav/MainActivity.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="186">
+          <caret line="240" column="27" selection-start-line="240" selection-start-column="12" selection-end-line="240" selection-end-column="27" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#8713#10101#1" />
+            <element signature="e#15018#16990#0" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Drone-app/src/main/java/com/vanttec/uav/MapsActivity.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="373">
+          <caret line="157" column="70" lean-forward="true" selection-start-line="157" selection-start-column="70" selection-end-line="157" selection-end-column="70" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#5156#6308#0" />
+            <element signature="e#7659#8324#0" />
+            <element signature="e#8506#8828#0" />
+            <element signature="e#8834#9122#0" />
+            <element signature="e#10991#11101#0" />
+            <element signature="e#11255#11633#0" />
+            <element signature="e#12030#12218#0" />
+            <element signature="e#12224#13759#0" />
+            <element signature="e#13765#15487#0" />
+            <element signature="e#15493#17050#0" />
+            <element signature="e#17221#17425#0" />
+            <element signature="e#17431#17941#0" />
+            <element signature="e#17947#18335#0" />
+            <element signature="e#18341#18408#0" />
+            <element signature="e#18414#18476#0" />
+            <element signature="e#18482#18547#0" />
+            <element signature="e#18553#18720#0" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Drone-app/src/main/java/com/vanttec/uav/DefaultLayoutActivity.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="306">
+          <caret line="34" column="61" selection-start-line="34" selection-start-column="49" selection-end-line="34" selection-end-column="61" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Drone-app/src/main/java/com/vanttec/uav/DemoApplication.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="373">
+          <caret line="61" column="44" lean-forward="true" selection-start-line="61" selection-start-column="44" selection-end-line="61" selection-end-column="44" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#995#996#0" expanded="true" />
+            <element signature="e#1033#1034#0" expanded="true" />
+            <element signature="method#getCameraInstance#1;class#DemoApplication#0" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Drone-app/src/main/java/com/vanttec/uav/ConnectionActivity.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="424">
+          <caret line="84" column="24" selection-start-line="84" selection-start-column="8" selection-end-line="84" selection-end-column="24" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="method#checkAndRequestPermissions#0;class#ConnectionActivity#0" />
+            <element signature="docComment;method#onRequestPermissionsResult#0;class#ConnectionActivity#0" />
+            <element signature="method#onRequestPermissionsResult#0;class#ConnectionActivity#0" />
+            <element signature="method#startSDKRegistration#0;class#ConnectionActivity#0" />
+            <element signature="method#showToast#0;class#ConnectionActivity#0" />
+            <element signature="method#updateVersion#0;class#ConnectionActivity#0" />
+            <element signature="method#loginAccount#0;class#ConnectionActivity#0" />
+            <element signature="method#tryUpdateFirmwareVersionWithListener#0;class#ConnectionActivity#0" />
+            <element signature="method#removeFirmwareVersionListener#0;class#ConnectionActivity#0" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Drone-app/src/main/AndroidManifest.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="161">
+          <caret line="15" column="58" selection-start-line="15" selection-start-column="58" selection-end-line="15" selection-end-column="58" />
+        </state>
+      </provider>
+      <provider editor-type-id="android-manifest" />
     </entry>
   </component>
 </project>
