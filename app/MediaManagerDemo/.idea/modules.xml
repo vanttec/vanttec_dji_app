@@ -2,9 +2,10 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/Drone-app/Drone-app.iml" filepath="$PROJECT_DIR$/Drone-app/Drone-app.iml" />
       <module fileurl="file://$PROJECT_DIR$/MediaManagerDemo.iml" filepath="$PROJECT_DIR$/MediaManagerDemo.iml" />
-      <module fileurl="file://$PROJECT_DIR$/app/MediaManagerDemo-app.iml" filepath="$PROJECT_DIR$/app/MediaManagerDemo-app.iml" />
-      <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Drone-app/app.iml" filepath="$PROJECT_DIR$/Drone-app/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/app-MediaManagerDemo.iml" filepath="$PROJECT_DIR$/app-MediaManagerDemo.iml" />
       <module fileurl="file://$PROJECT_DIR$/vanttec_uav.3.0-MediaManagerDemo.iml" filepath="$PROJECT_DIR$/vanttec_uav.3.0-MediaManagerDemo.iml" />
     </modules>
   </component>
