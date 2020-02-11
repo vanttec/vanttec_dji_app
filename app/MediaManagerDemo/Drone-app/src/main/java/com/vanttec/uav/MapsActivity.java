@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.location.Location;
+import android.nfc.Tag;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -50,6 +51,7 @@ import java.util.List;
 import java.util.Map;
 
 import dji.common.flightcontroller.FlightControllerState;
+import dji.common.flightcontroller.LocationCoordinate3D;
 import dji.sdk.flightcontroller.FlightController;
 
 
@@ -76,6 +78,11 @@ public class MapsActivity extends FragmentActivity
     static  final int ADD_GEOFENCE = 5;
     static  final int ADD_GEOFENCE_MANUALLY = 6;
 
+    /**cetec
+     * lat lng
+     * 25.65094662530861 -100.2913697557484
+     * **/
+
     /**
      * Request code for location permission request.
      *
@@ -92,7 +99,7 @@ public class MapsActivity extends FragmentActivity
     //Google vars
     private GoogleMap mMap;
 
-    static final LatLng cetec = new LatLng(25.649, -100.2897398);
+    static final LatLng cetec = new LatLng(25.65094662530861, -100.2913697557484);
     private LatLng MyLatLng, droneLatLng; //phone, drone location
 
     private Marker droneMarker;
@@ -139,8 +146,13 @@ public class MapsActivity extends FragmentActivity
                 });
 
         initUI();
-
         //geofencingClient = LocationServices.getGeofencingClient(this);
+    }
+
+    @Override
+    protected void onResume() {
+        Log.d(TAG, "onResume");
+        super.onResume();
     }
 
     private void initFlightController() {
@@ -148,34 +160,43 @@ public class MapsActivity extends FragmentActivity
         FlightController mFlightController = DemoApplication.getFlightController();
 
         if (mFlightController != null) {
-            mFlightController.setStateCallback(new FlightControllerState.Callback() {
+            //This method is called 10 times per second.
+            mFlightController.setStateCallback(djiFlightControllerCurrentState -> {
+                double droneLocationLat = djiFlightControllerCurrentState.getAircraftLocation().getLatitude();
+                double droneLocationLng = djiFlightControllerCurrentState.getAircraftLocation().getLongitude();
+                droneLatLng = new LatLng(droneLocationLat, droneLocationLng);
+                Log.d(TAG, "onUpdate drone latlng" + droneLocationLat + " " + droneLocationLng);
 
-                @Override
-                public void onUpdate(FlightControllerState djiFlightControllerCurrentState) {
-                    double droneLocationLat = djiFlightControllerCurrentState.getAircraftLocation().getLatitude();
-                    double droneLocationLng = djiFlightControllerCurrentState.getAircraftLocation().getLongitude();
-                    droneLatLng = new LatLng(droneLocationLat, droneLocationLng);
-                    Log.d(TAG, "onUpdate drone latlng" + droneLatLng);
+                if(!Double.isNaN(droneLocationLat) || !Double.isNaN((droneLocationLng))){
+                    Log.d(TAG, "update Drone Location");
                     updateDroneLocation();
+                } else {
+                    Log.d(TAG, "cant update Drone Location");
                 }
             });
         }
     }
 
     private void updateDroneLocation() {
+        Log.d(TAG, "creating marker");
+        MarkerOptions a = new MarkerOptions()
+                .position(droneLatLng)
+                .title("Drone :)")
+                .icon(BitmapDescriptorFactory.fromResource(R.drawable.drone_pin));
+        Log.d(TAG, "marker ready!");
 
-        if(droneMarker == null) {
-            MarkerOptions a = new MarkerOptions()
-                    .position(droneLatLng)
-                    .title("Drone :)")
-                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.drone_pin));
-            droneMarker = mMap.addMarker(a);
-        } else {
-            droneMarker.setPosition(droneLatLng);
-        }
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (droneMarker != null) {
+                    droneMarker.remove();
+                    Log.d(TAG, "marker remove");
+                }
+                droneMarker = mMap.addMarker(a);
+                Log.d(TAG, "marker on Map");
+            }
+        });
 
-        moveToLocation(droneLatLng);
-        Log.d(TAG, "updateDroneLocation");
         Toast.makeText(this, "drone \n" + droneLatLng, Toast.LENGTH_SHORT).show();
     }
 
@@ -234,7 +255,7 @@ public class MapsActivity extends FragmentActivity
         // Set a listener for marker click.
         mMap.setOnMarkerClickListener(this);
         mMap.setOnCircleClickListener(this);
-
+        Log.d(TAG, "onMapsReady");
         initFlightController();
     }
 
