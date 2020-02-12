@@ -16,6 +16,7 @@ import dji.sdk.base.BaseComponent;
 import dji.sdk.base.BaseProduct;
 import dji.sdk.camera.Camera;
 import dji.sdk.flightcontroller.FlightController;
+import dji.sdk.mission.waypoint.WaypointMissionOperator;
 import dji.sdk.products.Aircraft;
 import dji.sdk.products.HandHeld;
 import dji.sdk.sdkmanager.DJISDKInitEvent;
@@ -26,6 +27,7 @@ public class DemoApplication extends Application {
     public static final String FLAG_CONNECTION_CHANGE = "mediaManager_demo_connection_change";
 
     private static BaseProduct mProduct;
+    private static WaypointMissionOperator missionOperator;
     private Handler mHandler;
     private DJISDKManager.SDKManagerCallback mDJISDKManagerCallback;
     private Application instance;
@@ -57,6 +59,12 @@ public class DemoApplication extends Application {
         return (Aircraft) getProductInstance();
     }
 
+    public static synchronized WaypointMissionOperator getWaypointMissionControl() {
+        if (null == missionOperator) {
+            missionOperator = DJISDKManager.getInstance().getMissionControl().getWaypointMissionOperator();
+        }
+        return missionOperator;
+    }
 
     public static synchronized FlightController getFlightController() {
         Log.d("TAG", "getFlightController");

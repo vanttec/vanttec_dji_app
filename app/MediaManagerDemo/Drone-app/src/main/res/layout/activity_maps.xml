@@ -50,6 +50,25 @@
             android:text="@string/btn_stop"
             android:layout_weight="1"/>
     </LinearLayout>
+    <LinearLayout
+        android:id="@+id/lyt_dest_2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility = "gone"
+        android:orientation="horizontal">
+        <Button
+            android:id="@+id/configuration"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/btn_start"
+            android:layout_weight="1"/>
+        <Button
+            android:id="@+id/upload"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/btn_upload"
+            android:layout_weight="1"/>
+    </LinearLayout>
 
     <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:layout_width="match_parent"

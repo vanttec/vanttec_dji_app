@@ -18,6 +18,8 @@
     <string name="btn_stop">Stop</string>
     <string name="btn_clear">Clear</string>
     <string name="btn_add">Add</string>
+    <string name="btn_config">Configuration</string>
+    <string name="btn_upload">Upload</string>
 
     <string-array name="map_settings">
         <item>Locate Me</item>

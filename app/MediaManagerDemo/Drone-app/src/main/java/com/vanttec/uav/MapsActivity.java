@@ -3,6 +3,7 @@ package com.vanttec.uav;
 import android.Manifest;
 import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
@@ -16,7 +17,9 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.RadioGroup;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -50,9 +53,16 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import dji.common.error.DJIError;
 import dji.common.flightcontroller.FlightControllerState;
 import dji.common.flightcontroller.LocationCoordinate3D;
+import dji.common.mission.waypoint.Waypoint;
+import dji.common.mission.waypoint.WaypointMission;
+import dji.common.mission.waypoint.WaypointMissionFinishedAction;
+import dji.common.mission.waypoint.WaypointMissionFlightPathMode;
+import dji.common.mission.waypoint.WaypointMissionHeadingMode;
 import dji.sdk.flightcontroller.FlightController;
+import dji.sdk.mission.waypoint.WaypointMissionOperator;
 
 
 public class MapsActivity extends FragmentActivity
@@ -92,8 +102,8 @@ public class MapsActivity extends FragmentActivity
 
     //UI variables
     private Spinner sp_settings;
-    private LinearLayout lyt_dest;
-    private Button btn_start, btn_stop, btn_clear, btn_add;
+    private LinearLayout lyt_dest, lyt_dest_2;
+    private Button btn_start, btn_stop, btn_clear, btn_add, btn_config, btn_upload;
     private FloatingActionButton btn_camera;
 
     //Google vars
@@ -119,8 +129,19 @@ public class MapsActivity extends FragmentActivity
     private List<Geofence> geoList = new ArrayList<Geofence>();
     private double GEOFENCE_RADIUS = 100;
     private Marker geofenceMarker;
-
     private Circle geoFenceLimits;
+
+    //Drone
+    private float altitude = 100.0f;
+    private float mSpeed = 10.0f;
+
+    private List<Waypoint> waypointList = new ArrayList<>();
+    public static WaypointMission.Builder waypointMissionBuilder;
+    private WaypointMissionOperator missionOperator;
+    private WaypointMissionFinishedAction mFinishedAction = WaypointMissionFinishedAction.NO_ACTION;
+    private WaypointMissionHeadingMode mHeadingMode = WaypointMissionHeadingMode.AUTO;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -155,51 +176,6 @@ public class MapsActivity extends FragmentActivity
         super.onResume();
     }
 
-    private void initFlightController() {
-        Log.d(TAG, "initFlightController");
-        FlightController mFlightController = DemoApplication.getFlightController();
-
-        if (mFlightController != null) {
-            //This method is called 10 times per second.
-            mFlightController.setStateCallback(djiFlightControllerCurrentState -> {
-                double droneLocationLat = djiFlightControllerCurrentState.getAircraftLocation().getLatitude();
-                double droneLocationLng = djiFlightControllerCurrentState.getAircraftLocation().getLongitude();
-                droneLatLng = new LatLng(droneLocationLat, droneLocationLng);
-                Log.d(TAG, "onUpdate drone latlng" + droneLocationLat + " " + droneLocationLng);
-
-                if(!Double.isNaN(droneLocationLat) || !Double.isNaN((droneLocationLng))){
-                    Log.d(TAG, "update Drone Location");
-                    updateDroneLocation();
-                } else {
-                    Log.d(TAG, "cant update Drone Location");
-                }
-            });
-        }
-    }
-
-    private void updateDroneLocation() {
-        Log.d(TAG, "creating marker");
-        MarkerOptions a = new MarkerOptions()
-                .position(droneLatLng)
-                .title("Drone :)")
-                .icon(BitmapDescriptorFactory.fromResource(R.drawable.drone_pin));
-        Log.d(TAG, "marker ready!");
-
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                if (droneMarker != null) {
-                    droneMarker.remove();
-                    Log.d(TAG, "marker remove");
-                }
-                droneMarker = mMap.addMarker(a);
-                Log.d(TAG, "marker on Map");
-            }
-        });
-
-        Toast.makeText(this, "drone \n" + droneLatLng, Toast.LENGTH_SHORT).show();
-    }
-
     private void initUI() {
         //spinner dropdown
         sp_settings = (Spinner) findViewById(R.id.sp_settings);
@@ -213,16 +189,21 @@ public class MapsActivity extends FragmentActivity
 
         //Buttons set destination
         lyt_dest = (LinearLayout) findViewById(R.id.lyt_dest);
+        lyt_dest_2 = (LinearLayout) findViewById(R.id.lyt_dest_2);
 
         btn_add = (Button) findViewById(R.id.add);
         btn_clear = (Button) findViewById(R.id.clear);
         btn_stop = (Button) findViewById(R.id.stop);
         btn_start = (Button) findViewById(R.id.start);
+        btn_config = (Button) findViewById(R.id.configuration);
+        btn_upload = (Button) findViewById(R.id.upload);
 
         btn_add.setOnClickListener(this);
         btn_start.setOnClickListener(this);
         btn_stop.setOnClickListener(this);
         btn_clear.setOnClickListener(this);
+        btn_config.setOnClickListener(this);
+        btn_upload.setOnClickListener(this);
 
         btn_camera = (FloatingActionButton) findViewById(R.id.floatingActionButton);
         btn_camera.setOnClickListener(this);
@@ -313,6 +294,26 @@ public class MapsActivity extends FragmentActivity
                 clearMarkers();
                 break;
             }
+            case R.id.configuration: {
+                Log.d(TAG, "configuration btn pressed");
+                showSettingDialog();
+                break;
+            }
+            case R.id.upload: {
+                Log.d(TAG, "upload btn pressed");
+                //uploadWayPointMission();
+                break;
+            }
+            case R.id.start:{
+                Log.d(TAG, "start btn pressed");
+                //startWaypointMission();
+                break;
+            }
+            case R.id.stop:{
+                Log.d(TAG, "stop btn pressed");
+                //stopWaypointMission();
+                break;
+            }
             case R.id.floatingActionButton: {
                 finish();
                 /*Intent intent = new Intent(this, DefaultLayoutActivity.class);
@@ -326,6 +327,7 @@ public class MapsActivity extends FragmentActivity
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
         lyt_dest.setVisibility(View.GONE);
+        lyt_dest_2.setVisibility(View.GONE);
         switch (position) {
             case LOCATE_ME: {
                 // Move the camera instantly to My location with a zoom of 17.
@@ -338,11 +340,13 @@ public class MapsActivity extends FragmentActivity
             }
             case SET_DEST: {
                 lyt_dest.setVisibility(View.VISIBLE);
+                lyt_dest_2.setVisibility(View.VISIBLE);
                 isAddManually = false;
                 break;
             }
             case SET_DEST_MANUALLY: {
                 lyt_dest.setVisibility(View.VISIBLE);
+                lyt_dest_2.setVisibility(View.VISIBLE);
                 isAddManually = true;
                 break;
             }
@@ -577,5 +581,175 @@ public class MapsActivity extends FragmentActivity
     public void onCircleClick(Circle circle) {
         Toast.makeText(this, "Set Radio", Toast.LENGTH_SHORT).show();
         openDialogRadioGeofence();
+    }
+
+    //Drone Methods
+    private void initFlightController() {
+        Log.d(TAG, "initFlightController");
+        FlightController mFlightController = DemoApplication.getFlightController();
+
+        if (mFlightController != null) {
+            //This method is called 10 times per second.
+            mFlightController.setStateCallback(djiFlightControllerCurrentState -> {
+                double droneLocationLat = djiFlightControllerCurrentState.getAircraftLocation().getLatitude();
+                double droneLocationLng = djiFlightControllerCurrentState.getAircraftLocation().getLongitude();
+                droneLatLng = new LatLng(droneLocationLat, droneLocationLng);
+                Log.d(TAG, "onUpdate drone latlng" + droneLocationLat + " " + droneLocationLng);
+
+                if(!Double.isNaN(droneLocationLat) || !Double.isNaN((droneLocationLng))){
+                    Log.d(TAG, "update Drone Location");
+                    updateDroneLocation();
+                } else {
+                    Log.d(TAG, "cant update Drone Location");
+                }
+            });
+        }
+    }
+
+    private void updateDroneLocation() {
+        Log.d(TAG, "creating marker");
+        MarkerOptions a = new MarkerOptions()
+                .position(droneLatLng)
+                .title("Drone :)")
+                .icon(BitmapDescriptorFactory.fromResource(R.drawable.drone_pin));
+        Log.d(TAG, "marker ready!");
+
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (droneMarker != null) {
+                    droneMarker.remove();
+                    Log.d(TAG, "marker remove");
+                }
+                droneMarker = mMap.addMarker(a);
+                Log.d(TAG, "marker on Map");
+            }
+        });
+
+        Toast.makeText(this, "drone \n" + droneLatLng, Toast.LENGTH_SHORT).show();
+    }
+
+    private void showSettingDialog(){
+        LinearLayout wayPointSettings = (LinearLayout)getLayoutInflater().inflate(R.layout.dialog_config, null);
+
+        final TextView wpAltitude_TV = (TextView) wayPointSettings.findViewById(R.id.altitude);
+        RadioGroup speed_RG = (RadioGroup) wayPointSettings.findViewById(R.id.speed);
+        RadioGroup actionAfterFinished_RG = (RadioGroup) wayPointSettings.findViewById(R.id.actionAfterFinished);
+        RadioGroup heading_RG = (RadioGroup) wayPointSettings.findViewById(R.id.heading);
+
+        speed_RG.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener(){
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                if (checkedId == R.id.lowSpeed){
+                    mSpeed = 3.0f;
+                } else if (checkedId == R.id.MidSpeed){
+                    mSpeed = 5.0f;
+                } else if (checkedId == R.id.HighSpeed){
+                    mSpeed = 10.0f;
+                }
+            }
+        });
+
+        actionAfterFinished_RG.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                Log.d(TAG, "Select finish action");
+                if (checkedId == R.id.finishNone){
+                    mFinishedAction = WaypointMissionFinishedAction.NO_ACTION;
+                } else if (checkedId == R.id.finishGoHome){
+                    mFinishedAction = WaypointMissionFinishedAction.GO_HOME;
+                } else if (checkedId == R.id.finishAutoLanding){
+                    mFinishedAction = WaypointMissionFinishedAction.AUTO_LAND;
+                } else if (checkedId == R.id.finishToFirst){
+                    mFinishedAction = WaypointMissionFinishedAction.GO_FIRST_WAYPOINT;
+                }
+            }
+        });
+
+        heading_RG.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                Log.d(TAG, "Select heading");
+
+                if (checkedId == R.id.headingNext) {
+                    mHeadingMode = WaypointMissionHeadingMode.AUTO;
+                } else if (checkedId == R.id.headingInitDirec) {
+                    mHeadingMode = WaypointMissionHeadingMode.USING_INITIAL_DIRECTION;
+                } else if (checkedId == R.id.headingRC) {
+                    mHeadingMode = WaypointMissionHeadingMode.CONTROL_BY_REMOTE_CONTROLLER;
+                } else if (checkedId == R.id.headingWP) {
+                    mHeadingMode = WaypointMissionHeadingMode.USING_WAYPOINT_HEADING;
+                }
+            }
+        });
+
+        new AlertDialog.Builder(this)
+            .setTitle("")
+            .setView(wayPointSettings)
+            .setPositiveButton("Finish",new DialogInterface.OnClickListener(){
+                public void onClick(DialogInterface dialog, int id) {
+
+                    String altitudeString = wpAltitude_TV.getText().toString();
+                    altitude = Integer.parseInt(nulltoIntegerDefault(altitudeString));
+                    Log.e(TAG,"altitude " + altitude);
+                    Log.e(TAG,"speed " + mSpeed);
+                    Log.e(TAG, "mFinishedAction " + mFinishedAction);
+                    Log.e(TAG, "mHeadingMode " + mHeadingMode);
+                    configWayPointMission();
+                }
+            })
+            .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int id) {
+                    dialog.cancel();
+                }
+            })
+            .create()
+            .show();
+    }
+
+    String nulltoIntegerDefault(String value){
+        if(!isIntValue(value)) value="0";
+        return value;
+    }
+
+    boolean isIntValue(String val) {
+        try {
+            val=val.replace(" ","");
+            Integer.parseInt(val);
+        } catch (Exception e) {return false;}
+        return true;
+    }
+
+    private void configWayPointMission(){
+        if (waypointMissionBuilder == null){
+            waypointMissionBuilder = new WaypointMission.Builder().finishedAction(mFinishedAction)
+                    .headingMode(mHeadingMode)
+                    .autoFlightSpeed(mSpeed)
+                    .maxFlightSpeed(mSpeed)
+                    .flightPathMode(WaypointMissionFlightPathMode.NORMAL);
+        } else {
+            waypointMissionBuilder.finishedAction(mFinishedAction)
+                    .headingMode(mHeadingMode)
+                    .autoFlightSpeed(mSpeed)
+                    .maxFlightSpeed(mSpeed)
+                    .flightPathMode(WaypointMissionFlightPathMode.NORMAL);
+        }
+
+        if (waypointMissionBuilder.getWaypointList().size() > 0){
+            for (int i=0; i< waypointMissionBuilder.getWaypointList().size(); i++){
+                waypointMissionBuilder.getWaypointList().get(i).altitude = altitude;
+            }
+
+            Toast.makeText(this, "Set Waypoint attitude successfully", Toast.LENGTH_SHORT).show();
+        }
+
+        DJIError error = DemoApplication.getWaypointMissionControl().loadMission(waypointMissionBuilder.build());
+        if (error == null) {
+            Toast.makeText(this, "loadWaypoint succeeded", Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(this, "loadWaypoint failed " + error.getDescription(), Toast.LENGTH_SHORT).show();
+        }
     }
 }
