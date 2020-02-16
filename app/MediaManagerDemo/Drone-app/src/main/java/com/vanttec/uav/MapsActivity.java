@@ -23,6 +23,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentActivity;
@@ -52,18 +53,23 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import dji.common.error.DJIError;
 import dji.common.flightcontroller.FlightControllerState;
 import dji.common.flightcontroller.LocationCoordinate3D;
 import dji.common.mission.waypoint.Waypoint;
 import dji.common.mission.waypoint.WaypointMission;
+import dji.common.mission.waypoint.WaypointMissionDownloadEvent;
+import dji.common.mission.waypoint.WaypointMissionExecutionEvent;
 import dji.common.mission.waypoint.WaypointMissionFinishedAction;
 import dji.common.mission.waypoint.WaypointMissionFlightPathMode;
 import dji.common.mission.waypoint.WaypointMissionHeadingMode;
+import dji.common.mission.waypoint.WaypointMissionUploadEvent;
+import dji.common.util.CommonCallbacks;
 import dji.sdk.flightcontroller.FlightController;
 import dji.sdk.mission.waypoint.WaypointMissionOperator;
-
+import dji.sdk.mission.waypoint.WaypointMissionOperatorListener;
 
 public class MapsActivity extends FragmentActivity
         implements
@@ -113,7 +119,8 @@ public class MapsActivity extends FragmentActivity
     private LatLng MyLatLng, droneLatLng; //phone, drone location
 
     private Marker droneMarker;
-    private List<Marker> markers = new ArrayList<Marker>();
+    //private List<Marker> markers = new ArrayList<Marker>();
+    private final Map<Marker, Integer> markers = new ConcurrentHashMap<Marker, Integer>();
 
     private Boolean isAddManually = false;
 
@@ -142,6 +149,14 @@ public class MapsActivity extends FragmentActivity
     private WaypointMissionHeadingMode mHeadingMode = WaypointMissionHeadingMode.AUTO;
 
 
+    private void setResultToToast(final String string){
+        MapsActivity.this.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Toast.makeText(MapsActivity.this, string, Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -167,6 +182,9 @@ public class MapsActivity extends FragmentActivity
                 });
 
         initUI();
+
+        //WaypointMissionOperator
+        addListener();
         //geofencingClient = LocationServices.getGeofencingClient(this);
     }
 
@@ -174,6 +192,15 @@ public class MapsActivity extends FragmentActivity
     protected void onResume() {
         Log.d(TAG, "onResume");
         super.onResume();
+    }
+
+    @Override
+    protected void onDestroy() {
+        Log.d(TAG, "onDestroy");
+        //missing info, verfy if isnt anything else to quit
+
+        removeListener();
+        super.onDestroy();
     }
 
     private void initUI() {
@@ -187,10 +214,11 @@ public class MapsActivity extends FragmentActivity
         sp_settings.setAdapter(sp_adapter);
         sp_settings.setOnItemSelectedListener(this);
 
-        //Buttons set destination
+        //layouts for destination
         lyt_dest = (LinearLayout) findViewById(R.id.lyt_dest);
         lyt_dest_2 = (LinearLayout) findViewById(R.id.lyt_dest_2);
 
+        //Buttons set destination
         btn_add = (Button) findViewById(R.id.add);
         btn_clear = (Button) findViewById(R.id.clear);
         btn_stop = (Button) findViewById(R.id.stop);
@@ -229,7 +257,7 @@ public class MapsActivity extends FragmentActivity
         enableMyLocation();
 
         //init Marker
-        /*MarkerOptions a = new MarkerOptions().position(cetec).title("Drone").icon(BitmapDescriptorFactory.fromResource(R.drawable.drone_pin));
+        /*MarkerOptions a = new MarkerOptions().position(cetec).title("Drone").icon(BitmapDescriptorFactory.fromResource(R.drawable.drone_32));
         //Icons made by <a href="https://www.flaticon.com/authors/smashicons" title="Smashicons">Smashicons</a> from <a href="https://www.flaticon.com/" title="Flaticon"> www.flaticon.com</a>
         droneMarker = mMap.addMarker(a);*/
 
@@ -257,17 +285,16 @@ public class MapsActivity extends FragmentActivity
 
     @Override
     public boolean onMyLocationButtonClick() {
-        Toast.makeText(this, "MyLocation button clicked", Toast.LENGTH_SHORT).show();
+        setResultToToast("MyLocation button clicked");
         return false;
     }
 
     @Override
     public void onMyLocationClick(@NonNull Location location) {
-        Toast.makeText(this,
-                "Current phone location\n" +
-                        "lat: " + location.getLatitude() + "\n" +
-                        "long: " + location.getLongitude(),
-                Toast.LENGTH_LONG).show();
+        setResultToToast("Current phone location\n" +
+                "lat: " + location.getLatitude() + "\n" +
+                "long: " + location.getLongitude()
+        );
     }
 
     /**
@@ -301,17 +328,17 @@ public class MapsActivity extends FragmentActivity
             }
             case R.id.upload: {
                 Log.d(TAG, "upload btn pressed");
-                //uploadWayPointMission();
+                uploadWayPointMission();
                 break;
             }
             case R.id.start:{
                 Log.d(TAG, "start btn pressed");
-                //startWaypointMission();
+                startWaypointMission();
                 break;
             }
             case R.id.stop:{
                 Log.d(TAG, "stop btn pressed");
-                //stopWaypointMission();
+                stopWaypointMission();
                 break;
             }
             case R.id.floatingActionButton: {
@@ -375,17 +402,19 @@ public class MapsActivity extends FragmentActivity
     }
 
     public void addMarker(LatLng latlng) {
-        int stageNumber = markers.size() + 1;
+        String stageTxt = "Stage " + (markers.size() + 1);
         MarkerOptions a = new MarkerOptions()
                 .position(latlng)
                 .draggable(true)
-                .title("Stage " + stageNumber);
+                .title(stageTxt);
 
         Marker m = mMap.addMarker(a);
         m.setPosition(latlng);
 
-        markers.add(m);
+        //markers.add(m);
+        markers.put(m, markers.size());
         moveToLocation(latlng);
+        addWaypointOnLocation(latlng, stageTxt);
     }
 
     public void addGeoMarker(LatLng latlng) {
@@ -403,10 +432,10 @@ public class MapsActivity extends FragmentActivity
     }
 
     public void clearMarkers() {
-        for (int i = 0; i < markers.size(); i++) {
+        /*for (int i = 0; i < markers.size(); i++) {
             Marker aux = markers.get(i);
             aux.remove();
-        }
+        }*/
 
         markers.clear();
     }
@@ -540,7 +569,7 @@ public class MapsActivity extends FragmentActivity
     }
 
     private void addGeofenceCircle() {
-        Toast.makeText(this, "pos: " + geofenceMarker.getPosition(), Toast.LENGTH_SHORT).show();
+        setResultToToast("pos: " + geofenceMarker.getPosition());
         CircleOptions circleOptions = new CircleOptions()
                 .center( geofenceMarker.getPosition() )
                 .strokeColor(Color.argb(50, 70,70,70))
@@ -553,9 +582,9 @@ public class MapsActivity extends FragmentActivity
     /** Called when the user clicks a marker. */
     @Override
     public boolean onMarkerClick(final Marker marker) {
-        Toast.makeText(this, "pos: " + marker.getPosition(), Toast.LENGTH_SHORT).show();
+        setResultToToast("pos: " + marker.getPosition());
         if(marker.equals(geofenceMarker)) {
-            Toast.makeText(this, "Geo Marker", Toast.LENGTH_SHORT).show();
+            setResultToToast("Geo Marker");
             addGeofence();
         }
 
@@ -574,12 +603,14 @@ public class MapsActivity extends FragmentActivity
 
     @Override
     public void onMarkerDragEnd(Marker marker) {
-
+        setResultToToast("marker draged!");
+        int i = markers.get(marker);
+        modifyWaypointOnLocation(marker.getPosition(), i);
     }
 
     @Override
     public void onCircleClick(Circle circle) {
-        Toast.makeText(this, "Set Radio", Toast.LENGTH_SHORT).show();
+        setResultToToast("Set Radio");
         openDialogRadioGeofence();
     }
 
@@ -611,7 +642,7 @@ public class MapsActivity extends FragmentActivity
         MarkerOptions a = new MarkerOptions()
                 .position(droneLatLng)
                 .title("Drone :)")
-                .icon(BitmapDescriptorFactory.fromResource(R.drawable.drone_pin));
+                .icon(BitmapDescriptorFactory.fromResource(R.drawable.drone_32));
         Log.d(TAG, "marker ready!");
 
         runOnUiThread(new Runnable() {
@@ -626,9 +657,13 @@ public class MapsActivity extends FragmentActivity
             }
         });
 
-        Toast.makeText(this, "drone \n" + droneLatLng, Toast.LENGTH_SHORT).show();
+        //setResultToToast( "drone \n" + droneLatLng);
     }
 
+    //DJI Code
+    /**
+     * Config dialog
+     */
     private void showSettingDialog(){
         LinearLayout wayPointSettings = (LinearLayout)getLayoutInflater().inflate(R.layout.dialog_config, null);
 
@@ -685,18 +720,23 @@ public class MapsActivity extends FragmentActivity
             }
         });
 
+        //add confirmation or cancel buttons
         new AlertDialog.Builder(this)
             .setTitle("")
             .setView(wayPointSettings)
-            .setPositiveButton("Finish",new DialogInterface.OnClickListener(){
+            .setPositiveButton("Set",new DialogInterface.OnClickListener(){
                 public void onClick(DialogInterface dialog, int id) {
 
                     String altitudeString = wpAltitude_TV.getText().toString();
+
+                    //Validate Number
                     altitude = Integer.parseInt(nulltoIntegerDefault(altitudeString));
-                    Log.e(TAG,"altitude " + altitude);
-                    Log.e(TAG,"speed " + mSpeed);
-                    Log.e(TAG, "mFinishedAction " + mFinishedAction);
-                    Log.e(TAG, "mHeadingMode " + mHeadingMode);
+
+                    Log.d(TAG,"altitude " + altitude);
+                    Log.d(TAG,"speed " + mSpeed);
+                    Log.d(TAG, "mFinishedAction " + mFinishedAction);
+                    Log.d(TAG, "mHeadingMode " + mHeadingMode);
+
                     configWayPointMission();
                 }
             })
@@ -722,9 +762,12 @@ public class MapsActivity extends FragmentActivity
         return true;
     }
 
-    private void configWayPointMission(){
+    private void configWayPointMission() {
+        setResultToToast("config Way point start...");
+
         if (waypointMissionBuilder == null){
-            waypointMissionBuilder = new WaypointMission.Builder().finishedAction(mFinishedAction)
+            waypointMissionBuilder = new WaypointMission.Builder()
+                    .finishedAction(mFinishedAction)
                     .headingMode(mHeadingMode)
                     .autoFlightSpeed(mSpeed)
                     .maxFlightSpeed(mSpeed)
@@ -737,19 +780,133 @@ public class MapsActivity extends FragmentActivity
                     .flightPathMode(WaypointMissionFlightPathMode.NORMAL);
         }
 
+        setResultToToast( "adding waypoints...");
+        waypointMissionBuilder.waypointList(waypointList).waypointCount(waypointList.size());
+
         if (waypointMissionBuilder.getWaypointList().size() > 0){
             for (int i=0; i< waypointMissionBuilder.getWaypointList().size(); i++){
                 waypointMissionBuilder.getWaypointList().get(i).altitude = altitude;
             }
 
-            Toast.makeText(this, "Set Waypoint attitude successfully", Toast.LENGTH_SHORT).show();
+            setResultToToast( "Set Waypoint altitude successfully");
         }
 
         DJIError error = DemoApplication.getWaypointMissionControl().loadMission(waypointMissionBuilder.build());
         if (error == null) {
-            Toast.makeText(this, "loadWaypoint succeeded", Toast.LENGTH_SHORT).show();
+            setResultToToast("loadWaypoint succeeded");
         } else {
-            Toast.makeText(this, "loadWaypoint failed " + error.getDescription(), Toast.LENGTH_SHORT).show();
+            setResultToToast("loadWaypoint failed " + error.getDescription());
         }
+    }
+
+    //Add Listener for WaypointMissionOperator
+    private void addListener() {
+        if (DemoApplication.getWaypointMissionControl() != null) {
+            DemoApplication.getWaypointMissionControl().addListener(eventNotificationListener);
+        }
+    }
+
+    private void removeListener() {
+        if (DemoApplication.getWaypointMissionControl() != null) {
+            DemoApplication.getWaypointMissionControl().removeListener(eventNotificationListener);
+        }
+    }
+
+    private WaypointMissionOperatorListener eventNotificationListener = new WaypointMissionOperatorListener() {
+        @Override
+        public void onDownloadUpdate(WaypointMissionDownloadEvent downloadEvent) {
+
+        }
+
+        @Override
+        public void onUploadUpdate(WaypointMissionUploadEvent uploadEvent) {
+
+        }
+
+        @Override
+        public void onExecutionUpdate(WaypointMissionExecutionEvent executionEvent) {
+
+        }
+
+        @Override
+        public void onExecutionStart() {
+
+        }
+
+        @Override
+        public void onExecutionFinish(@Nullable final DJIError error) {
+            Log.d(TAG, "Execution finished: " + (error == null ? "Success!" : error.getDescription()));
+            Toast.makeText(MapsActivity.this, "Execution finished: " + (error == null ? "Success!" : error.getDescription()), Toast.LENGTH_SHORT).show();
+        }
+    };
+
+    //Add waypoint on set marker
+    private void addWaypointOnLocation(LatLng latlng, String stage) {
+        //make sure altitude is valid.
+        Waypoint mWaypoint = new Waypoint(latlng.latitude, latlng.longitude, altitude);
+        waypointList.add(mWaypoint);
+        Log.d(TAG, stage + " waypoint on load");
+        //Add Waypoints to Waypoint arraylist;
+        /*
+        if (waypointMissionBuilder != null) {
+            waypointList.add(mWaypoint);
+            waypointMissionBuilder.waypointList(waypointList).waypointCount(waypointList.size());
+        } else {
+            waypointMissionBuilder = new WaypointMission.Builder();
+            waypointList.add(mWaypoint);
+            waypointMissionBuilder.waypointList(waypointList).waypointCount(waypointList.size());
+        }
+        */
+        Log.d(TAG, stage + " waypoint is added");
+        setResultToToast( stage + " waypoint is added!");
+    }
+
+    private void modifyWaypointOnLocation(LatLng latlng, int i) {
+        //make sure altitude is valid.
+        Waypoint mWaypoint = new Waypoint(latlng.latitude, latlng.longitude, altitude);
+        waypointList.set(i, mWaypoint);
+
+        Log.d(TAG, i + " waypoint is added");
+        setResultToToast( i + " waypoint is added!");
+    }
+
+    private void uploadWayPointMission(){
+        Log.d(TAG, "uploading Mission");
+        DemoApplication.getWaypointMissionControl().uploadMission(new CommonCallbacks.CompletionCallback() {
+            @Override
+            public void onResult(DJIError error) {
+                if (error == null) {
+                    setResultToToast("Mission upload successfully!");
+                } else {
+                    setResultToToast("Mission upload failed, error: ");
+                    DemoApplication.getWaypointMissionControl().retryUploadMission(null);
+                }
+            }
+        });
+    }
+
+    private void startWaypointMission(){
+        DemoApplication.getWaypointMissionControl().startMission(new CommonCallbacks.CompletionCallback() {
+            @Override
+            public void onResult(DJIError error) {
+                Log.d(TAG, "start Waypoint ...");
+                Toast.makeText(MapsActivity.this,
+                        "Mission Start: " + (error == null ? "Successfully" : error.getDescription()),
+                        Toast.LENGTH_SHORT).show();
+            }
+        });
+
+    }
+
+    private void stopWaypointMission(){
+        DemoApplication.getWaypointMissionControl().stopMission(new CommonCallbacks.CompletionCallback() {
+            @Override
+            public void onResult(DJIError error) {
+                Toast.makeText(MapsActivity.this,
+                        "Mission Stop: " + (error == null ? "Successfully" : error.getDescription()),
+                        Toast.LENGTH_SHORT).show();
+            }
+        });
+
     }
 }
