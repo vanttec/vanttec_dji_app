@@ -54,6 +54,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.BiConsumer;
 
 import dji.common.error.DJIError;
 import dji.common.flightcontroller.FlightControllerState;
@@ -119,7 +120,6 @@ public class MapsActivity extends FragmentActivity
     private LatLng MyLatLng, droneLatLng; //phone, drone location
 
     private Marker droneMarker;
-    //private List<Marker> markers = new ArrayList<Marker>();
     private final Map<Marker, Integer> markers = new ConcurrentHashMap<Marker, Integer>();
 
     private Boolean isAddManually = false;
@@ -432,12 +432,18 @@ public class MapsActivity extends FragmentActivity
     }
 
     public void clearMarkers() {
-        /*for (int i = 0; i < markers.size(); i++) {
-            Marker aux = markers.get(i);
-            aux.remove();
-        }*/
-
         markers.clear();
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                mMap.clear();
+            }
+        });
+        waypointList.clear();
+
+        setResultToToast("waypointList is :" + waypointList.isEmpty());
+        Log.d(TAG, "waypointList is :" + waypointList.isEmpty());
+        Log.d(TAG, "markersList is :" + markers.isEmpty());
     }
 
     public void openDialogDest() {

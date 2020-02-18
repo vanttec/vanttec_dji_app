@@ -23,7 +23,7 @@
         android:id="@+id/lyt_dest"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:visibility = "gone"
+
         android:orientation="horizontal">
         <Button
             android:id="@+id/clear"
@@ -54,7 +54,7 @@
         android:id="@+id/lyt_dest_2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:visibility = "gone"
+
         android:orientation="horizontal">
         <Button
             android:id="@+id/configuration"
