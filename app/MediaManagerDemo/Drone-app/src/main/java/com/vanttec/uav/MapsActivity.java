@@ -896,13 +896,14 @@ public class MapsActivity extends FragmentActivity
         DemoApplication.getWaypointMissionControl().startMission(new CommonCallbacks.CompletionCallback() {
             @Override
             public void onResult(DJIError error) {
-                Log.d(TAG, "start Waypoint ...");
+                Log.d(TAG, "Radius ... ");
+
+                Log.d(TAG, "start Waypoint ..."  + error.getDescription());
                 Toast.makeText(MapsActivity.this,
                         "Mission Start: " + (error == null ? "Successfully" : error.getDescription()),
                         Toast.LENGTH_SHORT).show();
             }
         });
-
     }
 
     private void stopWaypointMission(){

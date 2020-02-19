@@ -87,10 +87,10 @@
             android:layout_gravity="end|bottom"
             android:layout_marginRight="1mm"
             android:layout_marginBottom="1mm"
-            android:backgroundTint="@color/cardview_dark_background"
+            android:backgroundTint="@color/white"
             android:clickable="true"
             android:focusable="true"
-            android:src="@drawable/ic_launcher_foreground"/>
+            android:src="@drawable/photography_32"/>
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
 </LinearLayout>

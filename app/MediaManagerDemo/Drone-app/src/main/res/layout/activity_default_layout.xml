@@ -18,10 +18,10 @@
         android:layout_marginRight="1mm"
         android:layout_marginBottom="1mm"
         android:layout_marginEnd="1mm"
-        android:backgroundTint="@color/cardview_dark_background"
+        android:backgroundTint="@color/white"
         android:clickable="true"
         android:focusable="true"
-        android:src="@drawable/ic_launcher_foreground"/>
+        android:src="@drawable/map_24"/>
 
     <!-- Widget to see first person view (FPV) -->
     <dji.ux.widget.FPVWidget
