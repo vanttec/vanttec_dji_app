@@ -51,8 +51,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/Drone-app/src/main/java/com/vanttec/uav/MapsActivity.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="225">
-              <caret line="444" column="31" lean-forward="true" selection-start-line="444" selection-start-column="20" selection-end-line="444" selection-end-column="31" />
+            <state relative-caret-position="570">
+              <caret line="431" column="44" lean-forward="true" selection-start-line="431" selection-start-column="44" selection-end-line="431" selection-end-column="44" />
               <folding>
                 <element signature="imports" expanded="true" />
                 <element signature="e#4774#4791#0" expanded="true" />
@@ -80,7 +80,7 @@
         <entry file="file://$PROJECT_DIR$/Drone-app/src/main/java/com/vanttec/uav/MApplication.java">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="400">
-              <caret line="23" column="35" lean-forward="true" selection-start-line="23" selection-start-column="8" selection-end-line="23" selection-end-column="35" />
+              <caret line="23" column="35" selection-start-line="23" selection-start-column="8" selection-end-line="23" selection-end-column="35" />
             </state>
           </provider>
         </entry>
@@ -89,7 +89,7 @@
         <entry file="file://$PROJECT_DIR$/Drone-app/src/main/res/layout/dialog_config.xml">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="300">
-              <caret line="15" column="21" lean-forward="true" selection-start-line="15" selection-start-column="21" selection-end-line="15" selection-end-column="21" />
+              <caret line="15" column="21" selection-start-line="15" selection-start-column="21" selection-end-line="15" selection-end-column="21" />
             </state>
           </provider>
           <provider editor-type-id="android-designer2" />
@@ -99,7 +99,7 @@
         <entry file="file://$PROJECT_DIR$/Drone-app/src/main/res/layout/activity_maps.xml">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="477">
-              <caret line="54" column="43" lean-forward="true" selection-start-line="54" selection-start-column="43" selection-end-line="54" selection-end-column="43" />
+              <caret line="54" column="43" selection-start-line="54" selection-start-column="43" selection-end-line="54" selection-end-column="43" />
               <folding>
                 <element signature="e#696#1861#0" />
                 <element signature="e#1550#1569#0" expanded="true" />
@@ -121,12 +121,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>marke</find>
-      <find>put</find>
-      <find>markers</find>
-      <find>on</find>
-      <find>addWaypointOnLocation</find>
-      <find>waypoint</find>
       <find>markers.get</find>
       <find>modify</find>
       <find>modifyWaypointOnLocation</find>
@@ -151,6 +145,12 @@
       <find>wayPointSettings</find>
       <find>wayPoint</find>
       <find>List is</find>
+      <find>Hash</find>
+      <find>moveToLocation</find>
+      <find>17</find>
+      <find>10</find>
+      <find>CLOSE</find>
+      <find>CLOSE_VIEW</find>
     </findStrings>
     <dirStrings>
       <dir>D:\Users\mimit\Documents\vanttec\vanttec_uav.3.0\MediaManagerDemo\app\src\debug\res</dir>
@@ -191,8 +191,8 @@
     </option>
   </component>
   <component name="ProjectFrameBounds" extendedState="6">
-    <option name="x" value="1477" />
-    <option name="y" value="-8" />
+    <option name="x" value="1390" />
+    <option name="y" value="-11" />
     <option name="width" value="1212" />
     <option name="height" value="735" />
   </component>
@@ -435,14 +435,14 @@
       <window_info id="Resources Explorer" order="7" />
       <window_info id="Capture Tool" order="8" />
       <window_info anchor="bottom" id="Find" order="0" weight="0.71088433" />
-      <window_info active="true" anchor="bottom" id="Run" order="1" visible="true" weight="0.35663506" />
+      <window_info active="true" anchor="bottom" id="Run" order="1" visible="true" weight="0.054502368" />
       <window_info anchor="bottom" id="Logcat" order="2" weight="0.32993197" />
       <window_info anchor="bottom" id="TODO" order="3" />
       <window_info anchor="bottom" id="Debug" order="4" weight="0.32993197" />
       <window_info anchor="bottom" id="Terminal" order="5" weight="0.32993197" />
       <window_info anchor="bottom" id="Event Log" order="6" side_tool="true" />
       <window_info anchor="bottom" id="Version Control" order="7" />
-      <window_info anchor="bottom" id="Build" order="8" weight="0.33412322" />
+      <window_info anchor="bottom" id="Build" order="8" weight="0.33333334" />
       <window_info anchor="bottom" id="Android Profiler" order="9" />
       <window_info anchor="right" id="Preview" order="0" weight="0.32928804" />
       <window_info anchor="right" id="Device File Explorer" order="1" side_tool="true" />
@@ -668,7 +668,7 @@
     <entry file="file://$PROJECT_DIR$/Drone-app/src/main/res/layout/dialog_config.xml">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="300">
-          <caret line="15" column="21" lean-forward="true" selection-start-line="15" selection-start-column="21" selection-end-line="15" selection-end-column="21" />
+          <caret line="15" column="21" selection-start-line="15" selection-start-column="21" selection-end-line="15" selection-end-column="21" />
         </state>
       </provider>
       <provider editor-type-id="android-designer2" />
@@ -684,14 +684,14 @@
     <entry file="file://$PROJECT_DIR$/Drone-app/src/main/java/com/vanttec/uav/MApplication.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="400">
-          <caret line="23" column="35" lean-forward="true" selection-start-line="23" selection-start-column="8" selection-end-line="23" selection-end-column="35" />
+          <caret line="23" column="35" selection-start-line="23" selection-start-column="8" selection-end-line="23" selection-end-column="35" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/Drone-app/src/main/res/layout/activity_maps.xml">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="477">
-          <caret line="54" column="43" lean-forward="true" selection-start-line="54" selection-start-column="43" selection-end-line="54" selection-end-column="43" />
+          <caret line="54" column="43" selection-start-line="54" selection-start-column="43" selection-end-line="54" selection-end-column="43" />
           <folding>
             <element signature="e#696#1861#0" />
             <element signature="e#1550#1569#0" expanded="true" />
@@ -703,8 +703,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/Drone-app/src/main/java/com/vanttec/uav/MapsActivity.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="225">
-          <caret line="444" column="31" lean-forward="true" selection-start-line="444" selection-start-column="20" selection-end-line="444" selection-end-column="31" />
+        <state relative-caret-position="570">
+          <caret line="431" column="44" lean-forward="true" selection-start-line="431" selection-start-column="44" selection-end-line="431" selection-end-column="44" />
           <folding>
             <element signature="imports" expanded="true" />
             <element signature="e#4774#4791#0" expanded="true" />

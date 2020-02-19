@@ -94,7 +94,8 @@ public class MapsActivity extends FragmentActivity
     static  final int RETURN_HOME = 4;
     static  final int ADD_GEOFENCE = 5;
     static  final int ADD_GEOFENCE_MANUALLY = 6;
-
+    static final int NORMAL_VIEW = 17;
+    static final int CLOSE_VIEW = 20;
     /**cetec
      * lat lng
      * 25.65094662530861 -100.2913697557484
@@ -176,7 +177,7 @@ public class MapsActivity extends FragmentActivity
                         // Got last known location. In some rare situations this can be null.
                         if (location != null) {
                             MyLatLng = new LatLng(location.getLatitude(),location.getLongitude());
-                            moveToLocation(MyLatLng);
+                            moveToLocation(MyLatLng, NORMAL_VIEW);
                         }
                     }
                 });
@@ -358,11 +359,11 @@ public class MapsActivity extends FragmentActivity
         switch (position) {
             case LOCATE_ME: {
                 // Move the camera instantly to My location with a zoom of 17.
-                moveToLocation(MyLatLng);
+                moveToLocation(MyLatLng, NORMAL_VIEW);
                 break;
             }
             case LOCATE_DRONE: {
-                moveToLocation(droneLatLng);
+                moveToLocation(droneLatLng, NORMAL_VIEW);
                 break;
             }
             case SET_DEST: {
@@ -396,9 +397,9 @@ public class MapsActivity extends FragmentActivity
         //moveToLocation(MyLatLng);
     }
 
-    public void moveToLocation(LatLng loc) {
+    public void moveToLocation(LatLng loc, int view) {
         if(loc != null)
-            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(loc,17));
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(loc,view));
     }
 
     public void addMarker(LatLng latlng) {
@@ -413,7 +414,7 @@ public class MapsActivity extends FragmentActivity
 
         //markers.add(m);
         markers.put(m, markers.size());
-        moveToLocation(latlng);
+        moveToLocation(latlng, NORMAL_VIEW);
         addWaypointOnLocation(latlng, stageTxt);
     }
 
@@ -428,7 +429,7 @@ public class MapsActivity extends FragmentActivity
         }
 
         geofenceMarker.setPosition(latlng);
-        moveToLocation(latlng);
+        moveToLocation(latlng, NORMAL_VIEW);
     }
 
     public void clearMarkers() {
