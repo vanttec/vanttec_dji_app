@@ -16,6 +16,7 @@ import dji.sdk.base.BaseComponent;
 import dji.sdk.base.BaseProduct;
 import dji.sdk.camera.Camera;
 import dji.sdk.flightcontroller.FlightController;
+import dji.sdk.mission.activetrack.ActiveTrackOperator;
 import dji.sdk.mission.waypoint.WaypointMissionOperator;
 import dji.sdk.products.Aircraft;
 import dji.sdk.products.HandHeld;
@@ -58,13 +59,12 @@ public class DemoApplication extends Application {
         if (!isAircraftConnected()) return null;
         return (Aircraft) getProductInstance();
     }
-
-    public static synchronized WaypointMissionOperator getWaypointMissionControl() {
+    /*
+    public static synchronized ActiveTrackOperator getWaypointMissionControl2() {
         if (null == missionOperator) {
-            missionOperator = DJISDKManager.getInstance().getMissionControl().getWaypointMissionOperator();
+            return DJISDKManager.getInstance().getMissionControl().getActiveTrackOperator();
         }
-        return missionOperator;
-    }
+    }*/
 
     public static synchronized FlightController getFlightController() {
         Log.d("TAG", "getFlightController");

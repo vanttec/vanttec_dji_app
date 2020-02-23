@@ -71,6 +71,7 @@ import dji.common.util.CommonCallbacks;
 import dji.sdk.flightcontroller.FlightController;
 import dji.sdk.mission.waypoint.WaypointMissionOperator;
 import dji.sdk.mission.waypoint.WaypointMissionOperatorListener;
+import dji.sdk.sdkmanager.DJISDKManager;
 
 public class MapsActivity extends FragmentActivity
         implements
@@ -107,6 +108,7 @@ public class MapsActivity extends FragmentActivity
      * @see #onRequestPermissionsResult(int, String[], int[])
      */
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 1;
+    private static WaypointMissionOperator missionOperator;
 
     //UI variables
     private Spinner sp_settings;
@@ -145,7 +147,7 @@ public class MapsActivity extends FragmentActivity
 
     private List<Waypoint> waypointList = new ArrayList<>();
     public static WaypointMission.Builder waypointMissionBuilder;
-    private WaypointMissionOperator missionOperator;
+    //private WaypointMissionOperator missionOperator;
     private WaypointMissionFinishedAction mFinishedAction = WaypointMissionFinishedAction.NO_ACTION;
     private WaypointMissionHeadingMode mHeadingMode = WaypointMissionHeadingMode.AUTO;
 
@@ -197,11 +199,17 @@ public class MapsActivity extends FragmentActivity
 
     @Override
     protected void onDestroy() {
-        Log.d(TAG, "onDestroy");
+            Log.d(TAG, "onDestroy");
         //missing info, verfy if isnt anything else to quit
 
         removeListener();
         super.onDestroy();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        Log.d(TAG,"onPause invoked");
     }
 
     private void initUI() {
@@ -441,6 +449,7 @@ public class MapsActivity extends FragmentActivity
             }
         });
         waypointList.clear();
+        waypointMissionBuilder.waypointList(waypointList);
 
         setResultToToast("waypointList is :" + waypointList.isEmpty());
         Log.d(TAG, "waypointList is :" + waypointList.isEmpty());
@@ -641,6 +650,20 @@ public class MapsActivity extends FragmentActivity
                     Log.d(TAG, "cant update Drone Location");
                 }
             });
+
+            mFlightController.getMaxFlightRadius(new CommonCallbacks.CompletionCallbackWith<Integer>() {
+                @Override
+                public void onSuccess(Integer integer) {
+                    setResultToToast("Radius limit :" + integer);
+                    Log.d(TAG, "Radius: " + integer);
+                }
+
+                @Override
+                public void onFailure(DJIError djiError) {
+                    setResultToToast("err radius:" + djiError.getDescription());
+                    Log.d(TAG, "Radius: error" + djiError.getDescription());
+                }
+            });
         }
     }
 
@@ -798,7 +821,7 @@ public class MapsActivity extends FragmentActivity
             setResultToToast( "Set Waypoint altitude successfully");
         }
 
-        DJIError error = DemoApplication.getWaypointMissionControl().loadMission(waypointMissionBuilder.build());
+        DJIError error = getWaypointMissionControl().loadMission(waypointMissionBuilder.build());
         if (error == null) {
             setResultToToast("loadWaypoint succeeded");
         } else {
@@ -808,14 +831,14 @@ public class MapsActivity extends FragmentActivity
 
     //Add Listener for WaypointMissionOperator
     private void addListener() {
-        if (DemoApplication.getWaypointMissionControl() != null) {
-            DemoApplication.getWaypointMissionControl().addListener(eventNotificationListener);
+        if (getWaypointMissionControl() != null) {
+            getWaypointMissionControl().addListener(eventNotificationListener);
         }
     }
 
     private void removeListener() {
-        if (DemoApplication.getWaypointMissionControl() != null) {
-            DemoApplication.getWaypointMissionControl().removeListener(eventNotificationListener);
+        if (getWaypointMissionControl() != null) {
+            getWaypointMissionControl().removeListener(eventNotificationListener);
         }
     }
 
@@ -832,7 +855,7 @@ public class MapsActivity extends FragmentActivity
 
         @Override
         public void onExecutionUpdate(WaypointMissionExecutionEvent executionEvent) {
-
+            Log.d(TAG, "current state: " + executionEvent.getCurrentState());
         }
 
         @Override
@@ -879,25 +902,31 @@ public class MapsActivity extends FragmentActivity
 
     private void uploadWayPointMission(){
         Log.d(TAG, "uploading Mission");
-        DemoApplication.getWaypointMissionControl().uploadMission(new CommonCallbacks.CompletionCallback() {
+        getWaypointMissionControl().uploadMission(new CommonCallbacks.CompletionCallback() {
             @Override
             public void onResult(DJIError error) {
                 if (error == null) {
                     setResultToToast("Mission upload successfully!");
                 } else {
-                    setResultToToast("Mission upload failed, error: ");
-                    DemoApplication.getWaypointMissionControl().retryUploadMission(null);
+                    setResultToToast("Mission upload failed, error: " + error.getDescription());
+                    getWaypointMissionControl().retryUploadMission(null);
                 }
             }
         });
     }
 
+    public static synchronized WaypointMissionOperator getWaypointMissionControl() {
+        if (null == missionOperator) {
+            missionOperator = DJISDKManager.getInstance().getMissionControl().getWaypointMissionOperator();
+        }
+        return missionOperator;
+    }
+
     private void startWaypointMission(){
-        DemoApplication.getWaypointMissionControl().startMission(new CommonCallbacks.CompletionCallback() {
+        getWaypointMissionControl().startMission(new CommonCallbacks.CompletionCallback() {
             @Override
             public void onResult(DJIError error) {
-                Log.d(TAG, "Radius ... ");
-
+                    Log.d(TAG, "missionstate: " +getWaypointMissionControl().getCurrentState() );
                 Log.d(TAG, "start Waypoint ..."  + error.getDescription());
                 Toast.makeText(MapsActivity.this,
                         "Mission Start: " + (error == null ? "Successfully" : error.getDescription()),
@@ -907,7 +936,7 @@ public class MapsActivity extends FragmentActivity
     }
 
     private void stopWaypointMission(){
-        DemoApplication.getWaypointMissionControl().stopMission(new CommonCallbacks.CompletionCallback() {
+        getWaypointMissionControl().stopMission(new CommonCallbacks.CompletionCallback() {
             @Override
             public void onResult(DJIError error) {
                 Toast.makeText(MapsActivity.this,
@@ -915,6 +944,5 @@ public class MapsActivity extends FragmentActivity
                         Toast.LENGTH_SHORT).show();
             }
         });
-
     }
 }
