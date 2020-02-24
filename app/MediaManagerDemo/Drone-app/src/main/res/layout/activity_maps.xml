@@ -26,25 +26,25 @@
 
         android:orientation="horizontal">
         <Button
-            android:id="@+id/clear"
+            android:id="@+id/dest_clear"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/btn_clear"
             android:layout_weight="1"/>
         <Button
-            android:id="@+id/add"
+            android:id="@+id/dest_add"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/btn_add"
             android:layout_weight="1"/>
         <Button
-            android:id="@+id/start"
+            android:id="@+id/dest_start"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/btn_start"
             android:layout_weight="1"/>
         <Button
-            android:id="@+id/stop"
+            android:id="@+id/dest_stop"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/btn_stop"
@@ -57,16 +57,47 @@
 
         android:orientation="horizontal">
         <Button
-            android:id="@+id/configuration"
+            android:id="@+id/dest_configuration"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/btn_config"
             android:layout_weight="1"/>
         <Button
-            android:id="@+id/upload"
+            android:id="@+id/dest_upload"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/btn_upload"
+            android:layout_weight="1"/>
+    </LinearLayout>
+    <LinearLayout
+        android:id="@+id/lyt_geofence_markers"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+
+        android:orientation="horizontal">
+        <Button
+            android:id="@+id/geo_clear"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/btn_clear"
+            android:layout_weight="1"/>
+        <Button
+            android:id="@+id/geo_add"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/btn_add"
+            android:layout_weight="1"/>
+        <Button
+            android:id="@+id/geo_remove"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/btn_remove"
+            android:layout_weight="1"/>
+        <Button
+            android:id="@+id/geo_set"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/btn_set_geo"
             android:layout_weight="1"/>
     </LinearLayout>
 

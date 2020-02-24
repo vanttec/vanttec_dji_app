@@ -28,6 +28,8 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentActivity;
 
+
+
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.Geofence;
 import com.google.android.gms.location.GeofencingClient;
@@ -47,6 +49,8 @@ import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.Polygon;
+import com.google.android.gms.maps.model.PolygonOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
@@ -112,8 +116,9 @@ public class MapsActivity extends FragmentActivity
 
     //UI variables
     private Spinner sp_settings;
-    private LinearLayout lyt_dest, lyt_dest_2;
-    private Button btn_start, btn_stop, btn_clear, btn_add, btn_config, btn_upload;
+    private LinearLayout lyt_dest, lyt_dest_2, lyt_geo;
+    private Button btn_dest_start, btn_dest_stop, btn_dest_clear, btn_dest_add, btn_dest_config, btn_dest_upload;
+    private Button btn_geo_set, btn_geo_remove, btn_geo_clear, btn_geo_add;
     private FloatingActionButton btn_camera;
 
     //Google vars
@@ -140,6 +145,12 @@ public class MapsActivity extends FragmentActivity
     private double GEOFENCE_RADIUS = 100;
     private Marker geofenceMarker;
     private Circle geoFenceLimits;
+
+    //Polygon Geofence
+    private PolygonOptions geofenceOpts = new PolygonOptions();
+    private Polygon geofenceP = null;
+    private final Map<Integer, Marker> geofenceMarkers = new ConcurrentHashMap<Integer, Marker>();
+    private boolean isGeofence = false;
 
     //Drone
     private float altitude = 100.0f;
@@ -226,21 +237,33 @@ public class MapsActivity extends FragmentActivity
         //layouts for destination
         lyt_dest = (LinearLayout) findViewById(R.id.lyt_dest);
         lyt_dest_2 = (LinearLayout) findViewById(R.id.lyt_dest_2);
+        lyt_geo = (LinearLayout) findViewById(R.id.lyt_geofence_markers);
 
         //Buttons set destination
-        btn_add = (Button) findViewById(R.id.add);
-        btn_clear = (Button) findViewById(R.id.clear);
-        btn_stop = (Button) findViewById(R.id.stop);
-        btn_start = (Button) findViewById(R.id.start);
-        btn_config = (Button) findViewById(R.id.configuration);
-        btn_upload = (Button) findViewById(R.id.upload);
+        btn_dest_add = (Button) findViewById(R.id.dest_add);
+        btn_dest_clear = (Button) findViewById(R.id.dest_clear);
+        btn_dest_stop = (Button) findViewById(R.id.dest_stop);
+        btn_dest_start = (Button) findViewById(R.id.dest_start);
+        btn_dest_config = (Button) findViewById(R.id.dest_configuration);
+        btn_dest_upload = (Button) findViewById(R.id.dest_upload);
 
-        btn_add.setOnClickListener(this);
-        btn_start.setOnClickListener(this);
-        btn_stop.setOnClickListener(this);
-        btn_clear.setOnClickListener(this);
-        btn_config.setOnClickListener(this);
-        btn_upload.setOnClickListener(this);
+        //Buttons geo markers
+        btn_geo_add = (Button) findViewById(R.id.geo_add);
+        btn_geo_remove = (Button) findViewById(R.id.geo_remove);
+        btn_geo_set = (Button) findViewById(R.id.geo_set);
+        btn_geo_clear = (Button) findViewById(R.id.geo_clear);
+
+        btn_dest_add.setOnClickListener(this);
+        btn_dest_start.setOnClickListener(this);
+        btn_dest_stop.setOnClickListener(this);
+        btn_dest_clear.setOnClickListener(this);
+        btn_dest_config.setOnClickListener(this);
+        btn_dest_upload.setOnClickListener(this);
+
+        btn_geo_add.setOnClickListener(this);
+        btn_geo_remove.setOnClickListener(this);
+        btn_geo_set.setOnClickListener(this);
+        btn_geo_clear.setOnClickListener(this);
 
         btn_camera = (FloatingActionButton) findViewById(R.id.floatingActionButton);
         btn_camera.setOnClickListener(this);
@@ -261,7 +284,6 @@ public class MapsActivity extends FragmentActivity
         //mMap.setOnMyLocationButtonClickListener(this);
         mMap.setOnMyLocationClickListener(this);
         mMap.setOnMarkerDragListener(this);
-
 
         enableMyLocation();
 
@@ -318,7 +340,7 @@ public class MapsActivity extends FragmentActivity
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.add: {
+            case R.id.dest_add: {
                 if (isAddManually) {
                     openDialogDest();
                 } else {
@@ -326,35 +348,51 @@ public class MapsActivity extends FragmentActivity
                 }
                 break;
             }
-            case R.id.clear: {
+            case R.id.dest_clear: {
                 clearMarkers();
                 break;
             }
-            case R.id.configuration: {
+            case R.id.dest_configuration: {
                 Log.d(TAG, "configuration btn pressed");
                 showSettingDialog();
                 break;
             }
-            case R.id.upload: {
+            case R.id.dest_upload: {
                 Log.d(TAG, "upload btn pressed");
                 uploadWayPointMission();
                 break;
             }
-            case R.id.start:{
+            case R.id.dest_start:{
                 Log.d(TAG, "start btn pressed");
                 startWaypointMission();
                 break;
             }
-            case R.id.stop:{
+            case R.id.dest_stop:{
                 Log.d(TAG, "stop btn pressed");
                 stopWaypointMission();
                 break;
             }
+            case R.id.geo_add: {
+                Log.d(TAG, "geo add btn pressed");
+                addSingleGeoMarker(MyLatLng);
+                break;
+            }
+            case R.id.geo_clear: {
+                Log.d(TAG, "geo clear btn pressed");
+                clearGeofence();
+                break;
+            }
+            case R.id.geo_remove: {
+                Log.d(TAG, "geo remove btn pressed");
+                break;
+            }
+            case R.id.geo_set: {
+                Log.d(TAG, "geo set btn pressed");
+                setGeoPolygon();
+                break;
+            }
             case R.id.floatingActionButton: {
                 finish();
-                /*Intent intent = new Intent(this, DefaultLayoutActivity.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                startActivity(intent);*/
             }
         }
     }
@@ -364,6 +402,9 @@ public class MapsActivity extends FragmentActivity
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
         lyt_dest.setVisibility(View.GONE);
         lyt_dest_2.setVisibility(View.GONE);
+        lyt_geo.setVisibility(View.GONE);
+        isGeofence = false;
+
         switch (position) {
             case LOCATE_ME: {
                 // Move the camera instantly to My location with a zoom of 17.
@@ -387,8 +428,11 @@ public class MapsActivity extends FragmentActivity
                 break;
             }
             case ADD_GEOFENCE:{
-                removeGeofence();
-                addGeoMarker(MyLatLng);
+                //removeGeofence();
+                //addGeoMarker(MyLatLng);
+                isGeofence = true;
+                lyt_geo.setVisibility(View.VISIBLE);
+
                 break;
             }
             case ADD_GEOFENCE_MANUALLY:{
@@ -438,6 +482,57 @@ public class MapsActivity extends FragmentActivity
 
         geofenceMarker.setPosition(latlng);
         moveToLocation(latlng, NORMAL_VIEW);
+    }
+
+    private void addSingleGeoMarker(LatLng latlng) {
+        String stageTxt = "Geo " + (geofenceMarkers.size() + 1);
+        MarkerOptions a = new MarkerOptions()
+                .position(latlng)
+                .draggable(true)
+                .title(stageTxt)
+                .icon(BitmapDescriptorFactory.fromResource(R.drawable.geofence_marker_32));
+
+        Marker m = mMap.addMarker(a);
+        geofenceMarkers.put(geofenceMarkers.size(), m);
+    }
+
+    private void setGeofenceVertex(LatLng latlng) {
+        geofenceOpts.add(latlng);
+
+        if(geofenceOpts.getPoints().size() > 3) {
+            if(geofenceP != null) {
+                geofenceP.remove();
+            }
+
+            geofenceP = mMap.addPolygon(geofenceOpts);
+            geofenceP.setStrokeColor(Color.GREEN);
+        }
+    }
+
+    private void setGeoPolygon() {
+        clearGeofence();
+        for(int i=0; i < geofenceMarkers.size(); i++) {
+            LatLng vertex = geofenceMarkers.get(i).getPosition();
+            setGeofenceVertex(vertex);
+        }
+    }
+
+    private void clearGeofenceMarkers() {
+        for(int i=0; i < geofenceMarkers.size(); i++) {
+            Marker m = geofenceMarkers.get(i);
+            m.remove();
+        }
+
+        geofenceMarkers.clear();
+    }
+
+    private void clearGeofence() {
+        if(geofenceP != null) {
+            geofenceP.remove();
+        }
+
+        clearGeofenceMarkers();
+        geofenceOpts = new PolygonOptions();
     }
 
     public void clearMarkers() {
@@ -619,9 +714,11 @@ public class MapsActivity extends FragmentActivity
 
     @Override
     public void onMarkerDragEnd(Marker marker) {
+        if(!isGeofence) {
+            int i = markers.get(marker);
+            modifyWaypointOnLocation(marker.getPosition(), i);
+        }
         setResultToToast("marker draged!");
-        int i = markers.get(marker);
-        modifyWaypointOnLocation(marker.getPosition(), i);
     }
 
     @Override
@@ -629,6 +726,7 @@ public class MapsActivity extends FragmentActivity
         setResultToToast("Set Radio");
         openDialogRadioGeofence();
     }
+
 
     //Drone Methods
     private void initFlightController() {

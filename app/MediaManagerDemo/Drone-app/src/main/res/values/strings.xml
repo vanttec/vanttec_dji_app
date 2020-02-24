@@ -20,6 +20,8 @@
     <string name="btn_add">Add</string>
     <string name="btn_config">Configuration</string>
     <string name="btn_upload">Upload</string>
+    <string name="btn_remove">remove</string>
+    <string name="btn_set_geo">set</string>
 
     <string-array name="map_settings">
         <item>Locate Me</item>
@@ -31,4 +33,5 @@
         <item>Add GeoFence Manually</item>
     </string-array>
     <string name="title_activity_maps2">Map</string>
+
 </resources>
