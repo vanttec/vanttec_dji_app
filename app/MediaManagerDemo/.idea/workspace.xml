@@ -9,14 +9,7 @@
     <option name="TOOL_WINDOW_CONFIGURED_FILTER" value="Show only selected application" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="9eb49134-99fc-42a2-8a16-36ad24822abc" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/libraries/Gradle__com_google_maps_android_android_maps_utils_0_6_2_aar.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/caches/build_file_checksums.ser" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/caches/build_file_checksums.ser" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Drone-app/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/Drone-app/build.gradle" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Drone-app/src/main/res/layout/activity_maps.xml" beforeDir="false" afterPath="$PROJECT_DIR$/Drone-app/src/main/res/layout/activity_maps.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Drone-app/src/main/res/values/strings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/Drone-app/src/main/res/values/strings.xml" afterDir="false" />
-    </list>
+    <list default="true" id="9eb49134-99fc-42a2-8a16-36ad24822abc" name="Default Changelist" comment="" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -44,8 +37,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/Drone-app/src/main/java/com/vanttec/uav/MapsActivity.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="33">
-              <caret line="736" column="22" selection-start-line="736" selection-start-column="22" selection-end-line="736" selection-end-column="22" />
+            <state relative-caret-position="244">
+              <caret line="738" column="9" selection-start-line="738" selection-start-column="9" selection-end-line="738" selection-end-column="9" />
               <folding>
                 <element signature="imports" expanded="true" />
                 <element signature="e#5948#5965#0" expanded="true" />
@@ -162,11 +155,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>WaypointMission</find>
-      <find>onPause</find>
-      <find>DJICodecManager</find>
-      <find>Geofence</find>
-      <find>GEOFENCE</find>
       <find>markers</find>
       <find>lyt_dest_2</find>
       <find>btn_add</find>
@@ -191,7 +179,12 @@
       <find>sdkmana</find>
       <find>dji</find>
       <find>DJISDKManager</find>
+      <find>veri</find>
       <find>updateDroneLocation</find>
+      <find>setGe</find>
+      <find>verify</find>
+      <find>verifyDroneLocation</find>
+      <find>Color</find>
     </findStrings>
     <dirStrings>
       <dir>D:\Users\mimit\Documents\vanttec\vanttec_uav.3.0\MediaManagerDemo\app\src\debug\res</dir>
@@ -430,7 +423,7 @@
       <window_info id="Resources Explorer" order="7" />
       <window_info id="Capture Tool" order="8" />
       <window_info anchor="bottom" id="Find" order="0" weight="0.71088433" />
-      <window_info active="true" anchor="bottom" id="Run" order="1" visible="true" weight="0.22037914" />
+      <window_info anchor="bottom" id="Run" order="1" weight="0.22037914" />
       <window_info anchor="bottom" id="Logcat" order="2" weight="0.44194314" />
       <window_info anchor="bottom" id="TODO" order="3" />
       <window_info anchor="bottom" id="Debug" order="4" weight="0.32993197" />
@@ -708,8 +701,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/Drone-app/src/main/java/com/vanttec/uav/MapsActivity.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="33">
-          <caret line="736" column="22" selection-start-line="736" selection-start-column="22" selection-end-line="736" selection-end-column="22" />
+        <state relative-caret-position="244">
+          <caret line="738" column="9" selection-start-line="738" selection-start-column="9" selection-end-line="738" selection-end-column="9" />
           <folding>
             <element signature="imports" expanded="true" />
             <element signature="e#5948#5965#0" expanded="true" />

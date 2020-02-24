@@ -53,6 +53,7 @@ import com.google.android.gms.maps.model.Polygon;
 import com.google.android.gms.maps.model.PolygonOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.maps.android.PolyUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -161,7 +162,6 @@ public class MapsActivity extends FragmentActivity
     //private WaypointMissionOperator missionOperator;
     private WaypointMissionFinishedAction mFinishedAction = WaypointMissionFinishedAction.NO_ACTION;
     private WaypointMissionHeadingMode mHeadingMode = WaypointMissionHeadingMode.AUTO;
-
 
     private void setResultToToast(final String string){
         MapsActivity.this.runOnUiThread(new Runnable() {
@@ -510,7 +510,7 @@ public class MapsActivity extends FragmentActivity
     }
 
     private void setGeoPolygon() {
-        clearGeofence();
+        geofenceOpts = new PolygonOptions();
         for(int i=0; i < geofenceMarkers.size(); i++) {
             LatLng vertex = geofenceMarkers.get(i).getPosition();
             setGeofenceVertex(vertex);
@@ -727,6 +727,27 @@ public class MapsActivity extends FragmentActivity
         openDialogRadioGeofence();
     }
 
+    private void verifyDroneLocation() {
+        boolean isDroneInside = false;
+        if(isGeofence && geofenceP != null) {
+            List<LatLng> geofencePoints = geofenceP.getPoints();
+            if(geofencePoints.size() > 2) {
+                if(PolyUtil.containsLocation(droneLatLng, geofencePoints, false)) {
+                    isDroneInside = true;
+                }
+            }
+        }
+
+        if(isDroneInside) {
+            Log.d(TAG, "Drone inside geofence" + droneLatLng);
+            if(geofenceP != null)
+                geofenceP.setStrokeColor(Color.GREEN);
+        } else {
+            if(geofenceP != null)
+                geofenceP.setStrokeColor(Color.RED);
+            Log.d(TAG, "Drone out of bounds!" + droneLatLng);
+        }
+    }
 
     //Drone Methods
     private void initFlightController() {
@@ -744,6 +765,7 @@ public class MapsActivity extends FragmentActivity
                 if(!Double.isNaN(droneLocationLat) || !Double.isNaN((droneLocationLng))){
                     Log.d(TAG, "update Drone Location");
                     updateDroneLocation();
+
                 } else {
                     Log.d(TAG, "cant update Drone Location");
                 }
@@ -769,7 +791,7 @@ public class MapsActivity extends FragmentActivity
         Log.d(TAG, "creating marker");
         MarkerOptions a = new MarkerOptions()
                 .position(droneLatLng)
-                .title("Drone :)")
+                .title("Drone")
                 .icon(BitmapDescriptorFactory.fromResource(R.drawable.drone_32));
         Log.d(TAG, "marker ready!");
 
@@ -782,6 +804,7 @@ public class MapsActivity extends FragmentActivity
                 }
                 droneMarker = mMap.addMarker(a);
                 Log.d(TAG, "marker on Map");
+                verifyDroneLocation();
             }
         });
 
