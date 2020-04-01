@@ -2,13 +2,10 @@ package com.vanttec.uav;
 
 import android.Manifest;
 import android.app.AlertDialog;
-import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.location.Location;
-import android.nfc.Tag;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -27,8 +24,6 @@ import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentActivity;
-
-
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.Geofence;
@@ -59,11 +54,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.BiConsumer;
 
 import dji.common.error.DJIError;
-import dji.common.flightcontroller.FlightControllerState;
-import dji.common.flightcontroller.LocationCoordinate3D;
 import dji.common.mission.waypoint.Waypoint;
 import dji.common.mission.waypoint.WaypointMission;
 import dji.common.mission.waypoint.WaypointMissionDownloadEvent;
@@ -164,12 +156,7 @@ public class MapsActivity extends FragmentActivity
     private WaypointMissionHeadingMode mHeadingMode = WaypointMissionHeadingMode.AUTO;
 
     private void setResultToToast(final String string){
-        MapsActivity.this.runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                Toast.makeText(MapsActivity.this, string, Toast.LENGTH_SHORT).show();
-            }
-        });
+        MapsActivity.this.runOnUiThread(() -> Toast.makeText(MapsActivity.this, string, Toast.LENGTH_SHORT).show());
     }
 
     @Override
@@ -184,14 +171,11 @@ public class MapsActivity extends FragmentActivity
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
 
         fusedLocationClient.getLastLocation()
-                .addOnSuccessListener(this, new OnSuccessListener<Location>() {
-                    @Override
-                    public void onSuccess(Location location) {
-                        // Got last known location. In some rare situations this can be null.
-                        if (location != null) {
-                            MyLatLng = new LatLng(location.getLatitude(),location.getLongitude());
-                            moveToLocation(MyLatLng, NORMAL_VIEW);
-                        }
+                .addOnSuccessListener(this, location -> {
+                    // Got last known location. In some rare situations this can be null.
+                    if (location != null) {
+                        MyLatLng = new LatLng(location.getLatitude(),location.getLongitude());
+                        moveToLocation(MyLatLng, NORMAL_VIEW);
                     }
                 });
 
@@ -563,21 +547,18 @@ public class MapsActivity extends FragmentActivity
         mBuilder.setView(dialogView);
         final AlertDialog dialog = mBuilder.create();
 
-        btnAdd.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(!latText.getText().toString().isEmpty() && !lngText.getText().toString().isEmpty()) {
-                    final Double lat = Double.parseDouble(latText.getText().toString());
-                    final Double lng = Double.parseDouble(lngText.getText().toString());
-                    final Double alt = Double.parseDouble(altText.getText().toString());
-                    addMarker(new LatLng(lat, lng));
-                    dialog.cancel();
-                } else {
-                    Toast toast = Toast.makeText(getApplicationContext(),
-                            "Set a lat & lng to continue",
-                            Toast.LENGTH_SHORT);
-                    toast.show();
-                }
+        btnAdd.setOnClickListener(v -> {
+            if(!latText.getText().toString().isEmpty() && !lngText.getText().toString().isEmpty()) {
+                final Double lat = Double.parseDouble(latText.getText().toString());
+                final Double lng = Double.parseDouble(lngText.getText().toString());
+                final Double alt = Double.parseDouble(altText.getText().toString());
+                addMarker(new LatLng(lat, lng));
+                dialog.cancel();
+            } else {
+                Toast toast = Toast.makeText(getApplicationContext(),
+                        "Set a lat & lng to continue",
+                        Toast.LENGTH_SHORT);
+                toast.show();
             }
         });
 
@@ -596,27 +577,24 @@ public class MapsActivity extends FragmentActivity
         mBuilder.setView(dialogView);
         final AlertDialog dialog = mBuilder.create();
 
-        btnAdd.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(!latText.getText().toString().isEmpty() && !lngText.getText().toString().isEmpty()) {
-                    final Double lat = Double.parseDouble(latText.getText().toString());
-                    final Double lng = Double.parseDouble(lngText.getText().toString());
+        btnAdd.setOnClickListener(v -> {
+            if(!latText.getText().toString().isEmpty() && !lngText.getText().toString().isEmpty()) {
+                final Double lat = Double.parseDouble(latText.getText().toString());
+                final Double lng = Double.parseDouble(lngText.getText().toString());
 
-                    if(!radioText.getText().toString().isEmpty()) {
-                        final Double radio = Double.parseDouble(radioText.getText().toString());
-                        GEOFENCE_RADIUS = radio;
-                    }
-
-                    addGeoMarker(new LatLng(lat, lng));
-                    addGeofence();
-                    dialog.cancel();
-                } else {
-                    Toast toast = Toast.makeText(getApplicationContext(),
-                            "Set a lat & lng to continue",
-                            Toast.LENGTH_SHORT);
-                    toast.show();
+                if(!radioText.getText().toString().isEmpty()) {
+                    final Double radio = Double.parseDouble(radioText.getText().toString());
+                    GEOFENCE_RADIUS = radio;
                 }
+
+                addGeoMarker(new LatLng(lat, lng));
+                addGeofence();
+                dialog.cancel();
+            } else {
+                Toast toast = Toast.makeText(getApplicationContext(),
+                        "Set a lat & lng to continue",
+                        Toast.LENGTH_SHORT);
+                toast.show();
             }
         });
 
@@ -651,14 +629,11 @@ public class MapsActivity extends FragmentActivity
             }
         });
 
-        btnRemove.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dialog.cancel();
-                removeGeofence();
-                geofenceMarker.remove();
-                geofenceMarker = null;
-            }
+        btnRemove.setOnClickListener(v -> {
+            dialog.cancel();
+            removeGeofence();
+            geofenceMarker.remove();
+            geofenceMarker = null;
         });
 
         dialog.show();
@@ -745,6 +720,7 @@ public class MapsActivity extends FragmentActivity
         } else {
             if(geofenceP != null)
                 geofenceP.setStrokeColor(Color.RED);
+
             Log.d(TAG, "Drone out of bounds!" + droneLatLng);
         }
     }
@@ -783,6 +759,11 @@ public class MapsActivity extends FragmentActivity
                     setResultToToast("err radius:" + djiError.getDescription());
                     Log.d(TAG, "Radius: error" + djiError.getDescription());
                 }
+            });
+
+            mFlightController.startGoHome(djiError -> {
+                setResultToToast("err:" + djiError.getDescription());
+                Log.d(TAG, "startGoHome:" + djiError.getDescription());
             });
         }
     }
